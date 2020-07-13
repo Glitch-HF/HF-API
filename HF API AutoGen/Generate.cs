@@ -62,9 +62,14 @@ namespace HF_API_AutoGen
                 var requestAsk = request.Attribute("ask").Value;
                 var requestPermissions = request.Attribute("permissions").Value;
                 var classPath = Path.Combine(sourcePath, requestClass + ".Generated.cs");
-                var classUsings = string.Join(Environment.NewLine, (request.Attribute("using")?.Value ?? "").Split(",").Where(use => !string.IsNullOrWhiteSpace(use)).Select(use => $"using {use.Trim().Trim(';')};"));
                 var requestDesc = request.Descendants("parameters");
-                var usingSystem = requestDesc.Any(req => req.Descendants("parameter").Any(para => para.Attribute("min") != null));
+
+                var classUsings = (request.Attribute("using")?.Value ?? "").Split(",").Where(use => !string.IsNullOrWhiteSpace(use)).Select(use => $"using {use.Trim().Trim(';')};").ToList();
+                classUsings.Add("using System.Collections.Generic;");
+                if (requestDesc.Any(req => req.Descendants("parameter").Any(para => para.Attribute("min") != null)))
+                {
+                    classUsings.Add("using System;");
+                }
 
                 sb.Append($@"//////////////////////////////////////////////
 /// This class is automatically generated. ///
@@ -74,9 +79,7 @@ namespace HF_API_AutoGen
 
 #region Auto-Generated Code
 
-{classUsings}
-{(usingSystem ? "using System;" : "")}
-using System.Collections.Generic;
+{string.Join(Environment.NewLine, classUsings)}
 
 namespace {sourceNamespace}
 {{

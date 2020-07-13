@@ -7,7 +7,6 @@
 #region Auto-Generated Code
 
 using HF_API.Requests.Enums;
-
 using System.Collections.Generic;
 
 namespace HF_API.Requests.Write

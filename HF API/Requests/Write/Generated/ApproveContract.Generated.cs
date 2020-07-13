@@ -6,8 +6,6 @@
 
 #region Auto-Generated Code
 
-
-
 using System.Collections.Generic;
 
 namespace HF_API.Requests.Write

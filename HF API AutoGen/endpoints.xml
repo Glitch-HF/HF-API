@@ -192,8 +192,8 @@
         <result name="ocurrency" type="string" />
         <result name="terms" type="string" />
         <result name="template_id" type="int" />
-        <result name="oaddress" type="string" />
         <result name="iaddress" type="string" />
+        <result name="oaddress" type="string" />
         <result name="inituser" type="User" />
         <result name="otheruser" type="User" />
         <result name="escrow" type="User" />
