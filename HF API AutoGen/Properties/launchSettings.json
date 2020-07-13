@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HF API AutoGen": {
+      "commandName": "Project",
+      "commandLineArgs": "\"path=C:\\Development\\Projects\\HF-API\\HF API\\Requests\""
+    }
+  }
+}

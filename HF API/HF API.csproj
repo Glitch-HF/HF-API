@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>HF_API</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="&quot;$(SolutionDir)HF API AutoGen\bin\$(ConfigurationName)\netcoreapp3.1\HF API AutoGen.exe&quot; &quot;path=$(ProjectDir)Requests&quot;" />
+  </Target>
+
+</Project>

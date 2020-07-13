@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29806.167
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HF API", "HF API\HF API.csproj", "{6EF1DFAF-1CCC-46DE-95FE-086FE74F1E59}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E5CB1FD2-5EBD-44BF-B511-AE638E4B3706} = {E5CB1FD2-5EBD-44BF-B511-AE638E4B3706}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HF API AutoGen", "HF API AutoGen\HF API AutoGen.csproj", "{E5CB1FD2-5EBD-44BF-B511-AE638E4B3706}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6EF1DFAF-1CCC-46DE-95FE-086FE74F1E59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EF1DFAF-1CCC-46DE-95FE-086FE74F1E59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EF1DFAF-1CCC-46DE-95FE-086FE74F1E59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EF1DFAF-1CCC-46DE-95FE-086FE74F1E59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5CB1FD2-5EBD-44BF-B511-AE638E4B3706}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5CB1FD2-5EBD-44BF-B511-AE638E4B3706}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5CB1FD2-5EBD-44BF-B511-AE638E4B3706}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5CB1FD2-5EBD-44BF-B511-AE638E4B3706}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A3B44065-416F-486B-A17B-BE83C55F079B}
+	EndGlobalSection
+EndGlobal
