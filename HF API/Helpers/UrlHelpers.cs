@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 
 namespace HF_API.Helpers
 {
     /// <summary>
-    /// Helper class for Urls.
+    /// Helper class for Uris.
     /// </summary>
     internal static class UriHelper
     {

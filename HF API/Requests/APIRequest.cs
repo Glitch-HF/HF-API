@@ -1,13 +1,12 @@
 ﻿using HF_API.Helpers;
+using HF_API.Enums;
+using HF_API.Results;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace HF_API.Requests
 {
@@ -19,60 +18,155 @@ namespace HF_API.Requests
         /// <summary>
         /// The base url.
         /// </summary>
-        private const string URL_API_BASE = "https://hackforums.net/api/v2";
+        private const string BaseUrl = "https://hackforums.net/api/v2";
 
         /// <summary>
         /// The request posting parameters.
         /// </summary>
         /// <returns>The dictionary of parameters to pass into the request.</returns>
-        protected abstract Dictionary<string, string> Parameters { get; }
+        protected Dictionary<string, object> Parameters { get; } = new Dictionary<string, object>();
 
         /// <summary>
-        /// The request path (read/write/authorize).
+        /// The request ask (me/forums/threads/posts/users/bytes/contracts)
         /// </summary>
-        protected abstract string Path { get; }
+        protected abstract RequestAsk Ask { get; }
 
         /// <summary>
-        /// The success state of this request.
+        /// The request type (read/write/authorize).
         /// </summary>
-        [JsonProperty("success")]
-        public bool Success { get; set; }
+        protected RequestType Type { get; set; }
 
         /// <summary>
-        /// The response message, if any.
+        /// Whether this request requires an authorization token.
         /// </summary>
-        [JsonProperty("message")]
-        public string Message { get; set; }
+        protected virtual bool RequireAuthToken => true;
 
         /// <summary>
         /// Gets the path for this request endpoint.
         /// </summary>
         /// <returns>The url for the request.</returns>
-        public string GetRequestPath() => UriHelper.Combine(URL_API_BASE, Path);
+        protected virtual string GetRequestPath() => UriHelper.Combine(BaseUrl, Type.ToString().ToLower());
 
         /// <summary>
         /// Gets the content data for the request.
         /// </summary>
         /// <returns>The FormUrlEncodedContent to pass into the request.</returns>
-        public FormUrlEncodedContent GetParameters() => new FormUrlEncodedContent(Parameters);
+        protected virtual FormUrlEncodedContent GetParameters() => new FormUrlEncodedContent(new []
+        {
+            KeyValuePair.Create("asks", JsonConvert.SerializeObject(new Dictionary<string, Dictionary<string, object>> { { Ask.ToString().ToLower(), Parameters } }))
+        });
 
         /// <summary>
-        /// Merges the deserialized request into the current object.
+        /// Attempts to process the request.
         /// </summary>
-        /// <typeparam name="T">The type of request.</typeparam>
-        /// <param name="result">The result APIRequest.</param>
-        public void MergeResult<T>(T result) where T : APIRequest
+        /// <typeparam name="T">The expected APIResult to get from this request.</typeparam>
+        /// <param name="client">The client to use to process this request.</param>
+        /// <returns>True if the request was successful, otherwise false.</returns>
+        protected T ProcessRequest<T>(HttpClient client) where T : APIResult
         {
-            if (typeof(T) != GetType() || result == null)
+            var requestTask = ProcessRequestAsync<T>(client);
+            requestTask.Wait();
+            return requestTask.Result;
+        }
+
+        /// <summary>
+        /// Attempts to process the request.
+        /// </summary>
+        /// <typeparam name="T">The expected APIResult to get from this request.</typeparam>
+        /// <param name="client">The client to use to process this request.</param>
+        /// <returns>True if the request was successful, otherwise false.</returns>
+        protected async Task<T> ProcessRequestAsync<T>(HttpClient client, bool multi = false) where T : APIResult
+        {
+            var result = Activator.CreateInstance<T>();
+            try
             {
-                return;
+                // Parse the json directly into the APIResult
+                var json = await ProcessRequestJsonAsync(client);
+
+                try
+                {
+                    result = JsonConvert.DeserializeObject<Dictionary<string, T>>(json).First().Value;
+                }
+                catch(JsonSerializationException)
+                {
+                    // Seemingly random, we get array results from the json even when we hit a single endpoint... so let's attempt to parse it that way
+                    result = JsonConvert.DeserializeObject<Dictionary<string, T[]>>(json).First().Value.First();
+                }
+            }
+            catch (Exception ex)
+            {
+                // If anything happens, flag unsuccessful and log error to the APIResult
+                result.Success = false;
+                result.Message = ex.ToString();
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Attempts to process the request.
+        /// </summary>
+        /// <typeparam name="T">The expected APIResult to get from this request.</typeparam>
+        /// <param name="client">The client to use to process this request.</param>
+        /// <returns>True if the request was successful, otherwise false.</returns>
+        protected T[] ProcessMultiRequest<T>(HttpClient client) where T : APIResult
+        {
+            var requestTask = ProcessMultiRequestAsync<T>(client);
+            requestTask.Wait();
+            return requestTask.Result;
+        }
+
+        /// <summary>
+        /// Attempts to process the request with the expectation of multiple results.
+        /// </summary>
+        /// <typeparam name="T">The expected APIResult to get from this request.</typeparam>
+        /// <param name="client">The client to use to process this request.</param>
+        /// <returns>True if the request was successful, otherwise false.</returns>
+        protected async Task<T[]> ProcessMultiRequestAsync<T>(HttpClient client) where T : APIResult
+        {
+            T[] result;
+            try
+            {
+                // Parse the json directly into the APIResult
+                var json = await ProcessRequestJsonAsync(client);
+                result = JsonConvert.DeserializeObject<Dictionary<string, T[]>>(json).First().Value;
+            }
+            catch (Exception ex)
+            {
+                // If anything happens, flag unsuccessful and log error to the APIResult
+                var exResult = Activator.CreateInstance<T>();
+                exResult.Success = false;
+                exResult.Message = ex.ToString();
+                result = new[] { exResult };
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Process the request and return the json response.
+        /// </summary>
+        /// <param name="client">The HttpClient to process.</param>
+        /// <returns>The json string from the client./returns>
+        private async Task<string> ProcessRequestJsonAsync(HttpClient client)
+        {
+            // We need a token for every request except the one where we request a token (authorize)
+            if (RequireAuthToken && client.DefaultRequestHeaders.Authorization == null)
+            {
+                throw new Exception("Request can't be made without first defining the authorization token.");
             }
 
-            // Iterate through the properties with the JsonProperty attribute and populate from the result.
-            foreach (var prop in result.GetType().GetProperties().Where(prop => Attribute.IsDefined(prop, typeof(JsonPropertyAttribute))))
+            // Generate the path and parameters
+            var requestPath = GetRequestPath();
+            var requestParameters = GetParameters();
+
+            // Get the server response
+            var response = await client.PostAsync(requestPath, requestParameters);
+            if (response.IsSuccessStatusCode)
             {
-                var value = prop.GetValue(result);
-                prop.SetValue(this, value);
+                return await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                throw new Exception($"Unsuccessful response code from server: {response.StatusCode.ToString()} ({(int)response.StatusCode})");
             }
         }
     }

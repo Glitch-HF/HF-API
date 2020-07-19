@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="&quot;$(SolutionDir)HF API AutoGen\bin\$(ConfigurationName)\netcoreapp3.1\HF API AutoGen.exe&quot; &quot;path=$(ProjectDir)Requests&quot;" />
+    <Exec Command="&quot;$(SolutionDir)HF API AutoGen\bin\$(ConfigurationName)\netcoreapp3.1\HF API AutoGen.exe&quot; &quot;path=$(ProjectDir)&quot;" />
   </Target>
 
 </Project>

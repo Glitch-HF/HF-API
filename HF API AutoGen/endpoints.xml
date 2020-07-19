@@ -12,389 +12,92 @@
     contracts: Contracts - Access to contracts, disputes, and b-ratings.
 -->
 <endpoints>
-  <!-- Read Requests: https://hackforums.net/api/v2/read -->
-  <reads path="Read" inherit="RequestRead">
-    <!-- Basic Profile and Site Information -->
-    <request class="Profile" ask="me" permissions="basic">
-      <parameters />
-      <results>
-        <result name="vault" type="decimal" />
-        <result name="uid" type="int" />
-        <result name="username" type="string" />
-        <result name="usergroup" type="string" />
-        <result name="displaygroup" type="string" />
-        <result name="additionalgroups" type="string" />
-        <result name="postnum" type="int" />
-        <result name="awards" type="int" />
-        <result name="bytes" type="decimal" />
-        <result name="threadnum" type="int" />
-        <result name="avatar" type="string" />
-        <result name="avatardimensions" type="string" />
-        <result name="avatartype" type="string" />
-        <result name="lastvisit" type="string" />
-        <result name="usertitle" type="string" />
-        <result name="website" type="string" />
-        <result name="timeonline" type="string" />
-        <result name="reputation" type="int" />
-        <result name="referrals" type="int" />
-        <result name="lastactive" type="string" permissions="advanced" />
-        <result name="unreadpms" type="int" permissions="advanced" />
-        <result name="invisible" type="bool" permissions="advanced" />
-        <result name="totalpms" type="int" permissions="advanced" />
-        <result name="warningpoints" type="decimal" permissions="advanced" />
-      </results>
-    </request>
-    
-    <!-- Read Forums -->
-    <request class="Forum" ask="forums" permissions="posts">
-      <parameters>
-        <parameter name="_fid" type="int" />
-      </parameters>
-      <results>
-        <result name="fid" type="int" />
-        <result name="name" type="string" />
-        <result name="description" type="string" />
-        <result name="type" type="string" />
-      </results>
-    </request>
-    
-    <!-- Read Threads -->
-    <request class="Thread" ask="threads" permissions="posts">
-      <parameters>
-        <parameter name="_tid" type="int" />
-        <parameter name="_uid" type="int" />
-        <parameter name="_page" type="int" />
-        <parameter name="_perpage" type="int" />
-      </parameters>
-      <results>
-        <result name="tid" type="int" />
-        <result name="uid" type="int" />
-        <result name="fid" type="int" />
-        <result name="subject" type="string" />
-        <result name="closed" type="bool" />
-        <result name="numreplies" type="int" />
-        <result name="views" type="int" />
-        <result name="dateline" type="string" />
-        <result name="firstpost" type="Post" />
-        <result name="lastpost" type="Post" />
-        <result name="lastposter" type="User" />
-        <result name="lastposteruid" type="int" />
-        <result name="prefix" type="string" />
-        <result name="icon" type="string" />
-        <result name="poll" type="string" />
-        <result name="username" type="string" />
-        <result name="sticky" type="bool" />
-        <result name="bestpid" type="int" />
-      </results>
-    </request>
-    
-    <!-- Read Posts -->
-    <request class="Post" ask="posts" permissions="posts">
-      <parameters>
-        <parameter name="_pid" type="int" />
-        <parameter name="_tid" type="int" />
-        <parameter name="_uid" type="int" />
-        <parameter name="_page" type="int" />
-        <parameter name="_perpage" type="int" />
-      </parameters>
-      <results>
-        <result name="pid" type="int" />
-        <result name="tid" type="int" />
-        <result name="uid" type="int" />
-        <result name="fid" type="int" />
-        <result name="dateline" type="string" />
-        <result name="message" type="string" />
-        <result name="subject" type="string" />
-        <result name="edituid" type="int" />
-        <result name="edittime" type="string" />
-        <result name="editreason" type="string" />
-        <result name="author" type="User" />
-      </results>
-    </request>
-    
-    <!-- Read Users -->
-    <request class="User" ask="users" permissions="users">
-      <parameters>
-        <parameter name="_uid" type="int" />
-      </parameters>
-      <results>
-        <result name="uid" type="int" />
-        <result name="username" type="string" />
-        <result name="usergroup" type="string" />
-        <result name="displaygroup" type="string" />
-        <result name="additionalgroups" type="string" />
-        <result name="postnum" type="int" />
-        <result name="awards" type="int" />
-        <result name="myps" type="decimal" />
-        <result name="threadnum" type="int" />
-        <result name="avatar" type="string" />
-        <result name="avatardimensions" type="string" />
-        <result name="avatartype" type="string" />
-        <result name="usertitle" type="string" />
-        <result name="website" type="string" />
-        <result name="timeonline" type="string" />
-        <result name="reputation" type="int" />
-        <result name="referrals" type="int" />
-      </results>
-    </request>
-
-    <!-- Read Bytes Transactions -->
-    <request class="ByteTransaction" ask="bytes" permissions="bytes">
-      <parameters>
-        <parameter name="_id" type="int" />
-        <parameter name="_uid" type="int" />
-        <parameter name="_from" type="int" />
-        <parameter name="_to" type="int" />
-        <parameter name="_page" type="int" />
-        <parameter name="_perpage" type="int" />
-      </parameters>
-      <results>
-        <result name="id" type="int" />
-        <result name="amount" type="decimal" />
-        <result name="dateline" type="string" />
-        <result name="type" type="string" />
-        <result name="reason" type="string" />
-        <result name="from" type="User" />
-        <result name="to" type="User" />
-        <result name="post" type="Post" />
-      </results>
-    </request>
-
-    <!-- Read Contracts -->
-    <request class="Contract" ask="contracts" permissions="contracts">
-      <parameters>
-        <parameter name="_cid" type="int" />
-        <parameter name="_uid" type="int" />
-        <parameter name="_page" type="int" />
-        <parameter name="_perpage" type="int" />
-      </parameters>
-      <results>
-        <result name="cid" type="int" />
-        <result name="dateline" type="string" />
-        <result name="otherdateline" type="string" />
-        <result name="public" type="bool" />
-        <result name="timeout_days" type="int" />
-        <result name="timeout" type="string" />
-        <result name="status" type="string" />
-        <result name="istatus" type="string" />
-        <result name="ostatus" type="string" />
-        <result name="cancelstatus" type="string" />
-        <result name="type" type="string" />
-        <result name="tid" type="int" />
-        <result name="inituid" type="int" />
-        <result name="otheruid" type="int" />
-        <result name="muid" type="int" />
-        <result name="iprice" type="decimal" />
-        <result name="oprice" type="decimal" />
-        <result name="iproduct" type="string" />
-        <result name="oproduct" type="string" />
-        <result name="icurrency" type="string" />
-        <result name="ocurrency" type="string" />
-        <result name="terms" type="string" />
-        <result name="template_id" type="int" />
-        <result name="iaddress" type="string" />
-        <result name="oaddress" type="string" />
-        <result name="inituser" type="User" />
-        <result name="otheruser" type="User" />
-        <result name="escrow" type="User" />
-        <result name="thread" type="Thread" />
-        <result name="idispute" type="Dispute" />
-        <result name="odispute" type="Dispute" />
-        <result name="ibrating" type="Brating" />
-        <result name="obrating" type="Brating" />
-      </results>
-    </request>
-
-    <!-- Read Disputes -->
-    <request class="Dispute" ask="disputes" permissions="contracts">
-      <parameters>
-        <parameter name="_cdid" type="int" />
-        <parameter name="_cid" type="int" />
-        <parameter name="_uid" type="int" />
-        <parameter name="_page" type="int" />
-        <parameter name="_perpage" type="int" />
-      </parameters>
-      <results>
-        <result name="cdid" type="int" />
-        <result name="contractid" type="int" />
-        <result name="claimantuid" type="int" />
-        <result name="defendantuid" type="int" />
-        <result name="dateline" type="string" />
-        <result name="status" type="string" />
-        <result name="dispute_tid" type="int" />
-        <result name="claimantnotes" type="string" />
-        <result name="defendantnotes" type="string" />
-        <result name="contract" type="Contract" />
-        <result name="claimant" type="User" />
-        <result name="defendant" type="User" />
-        <result name="dispute_thread" type="Thread" />
-      </results>
-    </request>
-
-    <!-- Read Bratings -->
-    <request class="Brating" ask="bratings" permissions="contracts">
-      <parameters>
-        <parameter name="_crid" type="int" />
-        <parameter name="_cid" type="int" />
-        <parameter name="_uid" type="int" />
-        <parameter name="_from" type="int" />
-        <parameter name="_to" type="int" />
-        <parameter name="_page" type="int" />
-        <parameter name="_perpage" type="int" />
-      </parameters>
-      <results>
-        <result name="crid" type="int" />
-        <result name="contractid" type="int" />
-        <result name="fromid" type="int" />
-        <result name="toid" type="int" />
-        <result name="dateline" type="string" />
-        <result name="amount" type="decimal" />
-        <result name="message" type="string" />
-        <result name="contract" type="Contract" />
-        <result name="from" type="User" />
-        <result name="to" type="User" />
-      </results>
-    </request>
-    
-  </reads>
+  <!-- Basic Profile and Site Information -->
+  <request class="Profile" ask="Me">
+    <method name="Read" apiType="Read" scope="BASIC" desc="Reads the basic profile information from the current token session." />
+    <properties>
+      <property name="uid" type="int" var="UserId" desc="The user's id." />
+      <property name="username" type="string" var="Username" desc="The username." />
+      <property name="postnum" type="int" var="PostCount" desc="The number of posts made." />
+      <property name="avatar" type="string" var="AvatarUrl" desc="The url or path to the user's avatar." />
+      <property name="avatardimensions" type="Size" var="AvatarDimensions" converter="AvatarSizeConverter" desc="The avatar dimensions." />
+      <property name="avatartype" type="string" var="AvatarType" desc="The avatar type." />
+      <property name="usergroup" type="int" var="UserGroupId" desc="The primary user group id." />
+      <property name="displaygroup" type="int" var="DisplayGroupId" desc="The display group id." />
+      <property name="additionalgroups" type="int[]" var="AdditionalGroupIds" converter="StringIntArrayConverter" desc="Comma-delimited list of secondary usergroups." />
+      <property name="awards" type="int" var="Awards" desc="The number of awards received." />
+      <property name="threadnum" type="int" var="ThreadCount" desc="The number of threads created." />
+      <property name="lastvisit" type="DateTime" var="LastVisit" converter="UnixDateTimeConverter" desc="The unix time stamp of the last visit." />
+      <property name="usertitle" type="string" var="UserTitle" desc="The user title." />
+      <property name="website" type="string" var="Website" desc="The user website." />
+      <property name="timeonline" type="TimeSpan" var="TimeOnline" converter="TimeSpanConverter" desc="The accumulated time, in seconds, that the user has ever been online for." />
+      <property name="reputation" type="int" var="ReputationCount" desc="The total number of reputation points." />
+      <property name="referrals" type="int" var="ReferralsCount" desc="The total number of users referred." />
+      <property name="bytes" type="decimal" var="BytesCount" desc="The total number of bytes currently held." />
+      <property name="vault" type="decimal" var="VaultCount" desc="The total number of bytes in the user's vault." />
+    </properties>
+  </request>
   
-  <!-- Write Requests: https://hackforums.net/api/v2/write -->
-  <writes path="Write" inherit="RequestWrite">
+  <!-- Advanced Profile -->
+  <request class="AdvancedProfile" inherits="Profile">
+    <method name="Read" apiType="Read" hidebase="true" scope="ADV" desc="Reads the advanced profile information from the current token session." />
+    <properties>
+      <property name="lastactive" type="DateTime" var="LastActive" converter="UnixDateTimeConverter" desc="The unix time stamp of the last time the user was active." />
+      <property name="unreadpms" type="int" var="UnreadPMCount" desc="The total count of unread pms." />
+      <property name="invisible" type="bool" var="IsInvisible" converter="BooleanConverter" desc="True if the user has turned on invisible status." />
+      <property name="totalpms" type="int" var="TotalPMCount" desc="The total number of PMs this user has made." />
+      <property name="warningpoints" type="decimal" var="WarningPointsCount" desc="The total number of warning points on this user." />
+    </properties>
+  </request>
+  
+  <!-- Forums -->
+  <request class="Forum" ask="Forums">
+    <method name="Get" apiType="Read" scope="POSTS" desc="Gets the forum from the specified forum id.">
+      <param name="_fid" type="int" var="forumId" desc="The forum id." />
+    </method>
+    <properties>
+      <property name="fid" type="int" var="Id" desc="The forum id." />
+      <property name="name" type="string" var="Name" desc="The name of the forum." />
+      <property name="description" type="string" var="Description" desc="The description of the forum." />
+      <property name="type" type="ForumType" var="Type" converter="ForumTypeConverter" desc="The forum type (category or forum)." />
+    </properties>
+  </request>
 
-    <!-- Create Posts -->
-    <request class="CreatePost" ask="posts" permissions="posts">
-      <parameters require="true">
-        <parameter name="_tid" type="int" var="threadId" description="The thread id." />
-        <parameter name="_message" type="string" var="message" description="The message to post." />
-      </parameters>
-    </request>
-
-    <!-- Create Threads -->
-    <request class="CreateThread" ask="threads" permissions="posts">
-      <parameters require="true">
-        <parameter name="_fid" type="int" var="forumId" description="The forum id." />
-        <parameter name="_subject" type="string" var="subject" description="The subject of the thread." />
-        <parameter name="_message" type="string" var="message" description="The message to post." />
-      </parameters>
-    </request>
-
-    <!-- Send Bytes -->
-    <request class="SendByte" ask="bytes" permissions="bytes">
-      <parameters require="true">
-        <parameter name="_uid" type="int" var="userId" description="The user id to send the bytes to." />
-        <parameter name="_amount" type="decimal" var="amount" description="The amount of bytes to send." />
-        <parameter name="_reason" type="string" var="reason" description="The reason for sending the bytes (optional)." require="false" />
-        <parameter name="_pid" type="string" var="postId" description="The post id to link to byte transaction to (optional)." require="false" />
-      </parameters>
-    </request>
-
-    <!-- Deposit Bytes -->
-    <request class="DepositByte" ask="bytes" permissions="bytes">
-      <parameters require="true">
-        <parameter name="_deposit" type="decimal" var="amount" description="The amount of bytes to deposit." min="100" />
-      </parameters>
-    </request>
-
-    <!-- Withdraw Bytes -->
-    <request class="SendByte" ask="bytes" permissions="bytes">
-      <parameters require="true">
-        <parameter name="_withdraw" type="decimal" var="amount" description="The amount of bytes to deposit." min="100" />
-      </parameters>
-    </request>
-
-    <!-- Bump Thread With Bytes -->
-    <request class="BumpByte" ask="bytes" permissions="bytes">
-      <parameters require="true">
-        <parameter name="_bump" type="int" var="threadId" description="The id of the thread." min="100" />
-      </parameters>
-    </request>
-
-    <!-- Create Contracts -->
-    <request class="CreateContract" using="HF_API.Requests.Enums" ask="contracts" permissions="contracts">
-      <parameters require="true">
-        <parameter name="_action" value="new" const="true"  />
-        <parameter name="_uid" type="int" var="userId" description="The id of the other user to begin the contract with." />
-        <parameter name="_position" type="ContractPosition" var="position" description="The current user's position in the contract." />
-        <parameter name="_terms" type="string" var="terms" description="The terms of the contract." />
-        <parameter name="_yourproduct" type="string" var="yourProduct" description="The user's product." require="false" />
-        <parameter name="_yourcurrency" type="ContractCurrency" var="yourCurrency" description="The user's currency." require="false" />
-        <parameter name="_youramount" type="string" var="yourAmount" description="The user's amount (and currency if ContractCurrency.OTHER)." require="false" />
-        <parameter name="_theirproduct" type="string" var="theirProduct" description="The other user's product." require="false" />
-        <parameter name="_theircurrency" type="ContractCurrency" var="theirCurrency" description="The other user's currency." require="false" />
-        <parameter name="_theiramount" type="string" var="theirAmount" description="The other user's amount (and currency if ContractCurrency.OTHER)." require="false" />
-        <parameter name="_tid" type="int" var="threadId" description="The id of the thread to link this contract to." require="false" />
-        <parameter name="_muid" type="int" var="middlemanId" description="The user id of the middleman." require="false" />
-        <parameter name="_timeout" type="int" var="timeoutDays" description="The time (in days) that the contract will expire." require="false" />
-        <parameter name="_public" type="ContractPublicState" var="isPublic" description="Whether this is a public contract." require="false" />
-        <parameter name="_address" type="string" var="paymentAddress" description="The payment address." require="false" />
-      </parameters>
-    </request>
-
-    <!-- Undo Contracts -->
-    <request class="UndoContract" ask="contracts" permissions="contracts">
-      <parameters require="true">
-        <parameter name="_action" value="undo" const="true"  />
-        <parameter name="_cid" type="int" var="contractId" description="The id of the contract." />
-      </parameters>
-    </request>
-
-    <!-- Deny Contracts -->
-    <request class="DenyContract" ask="contracts" permissions="contracts">
-      <parameters require="true">
-        <parameter name="_action" value="deny" const="true"  />
-        <parameter name="_cid" type="int" var="contractId" description="The id of the contract." />
-      </parameters>
-    </request>
-
-    <!-- Approve Contracts -->
-    <request class="ApproveContract" ask="contracts" permissions="contracts">
-      <parameters require="true">
-        <parameter name="_action" value="approve" const="true"  />
-        <parameter name="_cid" type="int" var="contractId" description="The id of the contract." />
-        <parameter name="_address" type="string" var="paymentAddress" description="The payment address." require="false" />
-      </parameters>
-    </request>
-
-    <!-- Middleman Deny Contracts -->
-    <request class="MiddlemanDenyContract" ask="contracts" permissions="contracts">
-      <parameters require="true">
-        <parameter name="_action" value="middleman_deny" const="true"  />
-        <parameter name="_cid" type="int" var="contractId" description="The id of the contract." />
-      </parameters>
-    </request>
-
-    <!-- Middleman Approve Contracts -->
-    <request class="MiddlemanApproveContract" ask="contracts" permissions="contracts">
-      <parameters require="true">
-        <parameter name="_action" value="middleman_approve" const="true"  />
-        <parameter name="_cid" type="int" var="contractId" description="The id of the contract." />
-      </parameters>
-    </request>
-
-    <!-- Vendor Cancel Contracts -->
-    <request class="VendorCancelContract" ask="contracts" permissions="contracts">
-      <parameters require="true">
-        <parameter name="_action" value="vendor_cancel" const="true"  />
-        <parameter name="_cid" type="int" var="contractId" description="The id of the contract." />
-      </parameters>
-    </request>
-
-    <!-- Cancel Contracts -->
-    <request class="CancelContract" ask="contracts" permissions="contracts">
-      <parameters require="true">
-        <parameter name="_action" value="cancel" const="true"  />
-        <parameter name="_cid" type="int" var="contractId" description="The id of the contract." />
-      </parameters>
-    </request>
-
-    <!-- Complete Contracts -->
-    <request class="CompleteContract" ask="contracts" permissions="contracts">
-      <parameters require="true">
-        <parameter name="_action" value="complete" const="true"  />
-        <parameter name="_cid" type="int" var="contractId" description="The id of the contract." />
-        <parameter name="_txn" type="string" var="txn" description="The transaction." require="false" />
-      </parameters>
-    </request>
-    
-  </writes>
+  <!-- Threads -->
+  <request class="Thread" ask="Threads">
+    <method name="Get" apiType="Read" scope="POSTS" desc="Gets the thread from the specified thread id.">
+      <param name="_tid" type="int" var="threadId" desc="The thread id." />
+    </method>
+    <method name="SearchByUserId" apiType="Read" multi="true" scope="POSTS" desc="Searches all the threads made by the specified user.">
+      <param name="_uid" type="int" var="userId" desc="The user id." />
+      <param name="_page" type="int" var="page" desc="The page number." />
+      <param name="_perpage" type="int" var="perPage" desc="The number of results per page." />
+    </method>
+    <method name="Create" apiType="Write" scope="POSTSWRITE" desc="Creates a new thread in the specified forum with the current token user as the author.">
+      <param name="_fid" type="int" var="forumId" desc="The forum id." />
+      <param name="_subject" type="string" var="subject" desc="The subject of the thread." />
+      <param name="_message" type="string" var="message" desc="The message to post." />
+    </method>
+    <properties>
+      <property name="tid" type="int" var="Id" desc="The thread id." />
+      <property name="fid" type="int" var="ForumId" desc="The forum id." />
+      <property name="subject" type="string" var="Subject" desc="The thread subject." />
+      <property name="prefix" type="int" var="PrefixId" desc="The thread prefix id." />
+      <property name="icon" type="int" var="IconId" desc="The icon id." />
+      <property name="poll" type="int" var="PollId" desc="The poll id." />
+      <property name="uid" type="int" var="UserId" desc="The user id of the author." />
+      <property name="username" type="string" var="Username" desc="The username of the thread author." />
+      <property name="dateline" type="DateTime" var="CreationTime" converter="UnixDateTimeConverter" desc="The time that the thread was created."/>
+      <property name="firstpost" type="long" var="FirstPostId" desc="The id of the first post."/>
+      <property name="lastpost" type="DateTime" var="LastPostTime" converter="UnixDateTimeConverter" desc="The time of the last post." />
+      <property name="lastposter" type="string" var="LastPostUsername" desc="The name of the user that made the last post." />
+      <property name="lastposteruid" type="int" var="LastPostUid" desc="The id of the last poster." />
+      <property name="views" type="int" var="ViewCount" desc="The total number of views."/>
+      <property name="numreplies" type="int" var="ReplyCount" desc="The total number of replies."/>
+      <property name="closed" type="bool" var="IsClosed" converter="BooleanConverter" desc="Whether the thread is closed or not." />
+      <property name="sticky" type="bool" var="IsSticky" converter="BooleanConverter" desc="Whether the thread is sticky or not." />
+      <property name="bestpid" type="int" var="BestPostId" desc="The id of the highest rated post."/>
+    </properties>
+  </request>
+  
 </endpoints>
