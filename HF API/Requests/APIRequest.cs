@@ -158,13 +158,14 @@ namespace HF_API.Requests
 
                 try
                 {
-                    if (json.StartsWithICIW("{\"success\":"))
+                    // Success responses and AuthToken responses don't contain "asks"
+                    if (json.StartsWithICIW("{\"success\":") || typeof(T) == typeof(AuthToken))
                     {
                         result = JsonConvert.DeserializeObject<T>(json);
                     }
                     else
                     {
-                        result = JsonConvert.DeserializeObject<Dictionary<string, T>>(json).First().Value;
+                        result = JsonConvert.DeserializeObject<Dictionary<string, T>>(json)[Ask.ToString().ToLower()];
                     }
                 }
                 catch(JsonSerializationException initialException)
@@ -172,7 +173,7 @@ namespace HF_API.Requests
                     // Seemingly random, we get array results from the json even when we hit a single endpoint... so let's attempt to parse it that way
                     try
                     {
-                        result = JsonConvert.DeserializeObject<Dictionary<string, T[]>>(json).First().Value.First();
+                        result = JsonConvert.DeserializeObject<Dictionary<string, T[]>>(json)[Ask.ToString().ToLower()].First();
                     }
                     catch (JsonSerializationException)
                     {
@@ -221,7 +222,7 @@ namespace HF_API.Requests
             {
                 // Parse the json directly into the APIResult
                 var json = await ProcessRequestJsonAsync(client);
-                result = JsonConvert.DeserializeObject<Dictionary<string, T[]>>(json).First().Value;
+                result = JsonConvert.DeserializeObject<Dictionary<string, T[]>>(json)[Ask.ToString().ToLower()];
             }
             catch (Exception ex)
             {
