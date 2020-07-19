@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using HF_API.Converters;
+using Newtonsoft.Json;
 
 namespace HF_API.Results
 {
@@ -13,7 +11,7 @@ namespace HF_API.Results
         /// <summary>
         /// The success state of this request.
         /// </summary>
-        [JsonProperty("success")]
+        [JsonProperty("success"), JsonConverter(typeof(BoolConverter))]
         public bool Success { get; set; } = true;
 
         /// <summary>

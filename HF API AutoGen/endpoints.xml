@@ -44,7 +44,7 @@
     <properties>
       <property name="lastactive" type="DateTime" var="LastActive" converter="UnixDateTimeConverter" desc="The unix time stamp of the last time the user was active." />
       <property name="unreadpms" type="int" var="UnreadPMCount" desc="The total count of unread pms." />
-      <property name="invisible" type="bool" var="IsInvisible" converter="BooleanConverter" desc="True if the user has turned on invisible status." />
+      <property name="invisible" type="bool" var="IsInvisible" converter="BoolConverter" desc="True if the user has turned on invisible status." />
       <property name="totalpms" type="int" var="TotalPMCount" desc="The total number of PMs this user has made." />
       <property name="warningpoints" type="decimal" var="WarningPointsCount" desc="The total number of warning points on this user." />
     </properties>
@@ -94,8 +94,8 @@
       <property name="lastposteruid" type="int" var="LastPostUid" desc="The id of the last poster." />
       <property name="views" type="int" var="ViewCount" desc="The total number of views."/>
       <property name="numreplies" type="int" var="ReplyCount" desc="The total number of replies."/>
-      <property name="closed" type="bool" var="IsClosed" converter="BooleanConverter" desc="Whether the thread is closed or not." />
-      <property name="sticky" type="bool" var="IsSticky" converter="BooleanConverter" desc="Whether the thread is sticky or not." />
+      <property name="closed" type="bool" var="IsClosed" converter="BoolConverter" desc="Whether the thread is closed or not." />
+      <property name="sticky" type="bool" var="IsSticky" converter="BoolConverter" desc="Whether the thread is sticky or not." />
       <property name="bestpid" type="int" var="BestPostId" desc="The id of the highest rated post."/>
     </properties>
   </request>

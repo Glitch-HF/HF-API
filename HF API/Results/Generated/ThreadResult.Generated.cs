@@ -108,13 +108,13 @@ namespace HF_API.Results
         /// <summary>
         /// Whether the thread is closed or not.
         /// <summary>
-        [JsonProperty("closed"), JsonConverter(typeof(BooleanConverter))]
+        [JsonProperty("closed"), JsonConverter(typeof(BoolConverter))]
         public bool IsClosed { get; set; }
 
         /// <summary>
         /// Whether the thread is sticky or not.
         /// <summary>
-        [JsonProperty("sticky"), JsonConverter(typeof(BooleanConverter))]
+        [JsonProperty("sticky"), JsonConverter(typeof(BoolConverter))]
         public bool IsSticky { get; set; }
 
         /// <summary>

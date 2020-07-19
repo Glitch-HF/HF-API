@@ -15,6 +15,9 @@ namespace HF_API.Extensions
         /// <returns>An array of all of the valid integers that were found.</returns>
         public static int[] SplitInts(this string input, params char[] separator) => input.Split(separator).TryParseInts();
 
+        /// <inheritdoc cref="string.StartsWith(string)"/>
+        public static bool StartsWithICIW(this string input, string compare) => input.ToLower().Trim().StartsWith(compare.ToLower().Trim());
+
         /// <summary>
         /// Attempts to parse the value as a long.
         /// </summary>
@@ -28,6 +31,7 @@ namespace HF_API.Extensions
         /// </summary>
         /// <param name="input">The input string.</param>
         /// <returns>The resulting bool, or defaults to false.</returns>
-        public static bool TryParseBoolean(this string input) => !string.IsNullOrWhiteSpace(input) && (bool.TryParse(input, out bool output) ? output : "tTyY1".Contains(input[0]));
+        public static bool TryParseBoolean(this string input, bool defaultValue = false) =>
+            string.IsNullOrWhiteSpace(input) ? defaultValue : (bool.TryParse(input, out bool output) ? output : "tTyY1".Contains(input[0]));
     }
 }

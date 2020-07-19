@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Concurrent;
+using HF_API.Extensions;
 
 namespace HF_API.Requests
 {
@@ -157,12 +158,32 @@ namespace HF_API.Requests
 
                 try
                 {
-                    result = JsonConvert.DeserializeObject<Dictionary<string, T>>(json).First().Value;
+                    if (json.StartsWithICIW("{\"success\":"))
+                    {
+                        result = JsonConvert.DeserializeObject<T>(json);
+                    }
+                    else
+                    {
+                        result = JsonConvert.DeserializeObject<Dictionary<string, T>>(json).First().Value;
+                    }
                 }
-                catch(JsonSerializationException)
+                catch(JsonSerializationException initialException)
                 {
                     // Seemingly random, we get array results from the json even when we hit a single endpoint... so let's attempt to parse it that way
-                    result = JsonConvert.DeserializeObject<Dictionary<string, T[]>>(json).First().Value.First();
+                    try
+                    {
+                        result = JsonConvert.DeserializeObject<Dictionary<string, T[]>>(json).First().Value.First();
+                    }
+                    catch (JsonSerializationException)
+                    {
+                        // Throw the initial exception if the multi-params didn't work
+                        throw initialException;
+                    }
+                }
+
+                if (!result.Success)
+                {
+                    throw APIException.FromMessage(result.Message);
                 }
             }
             catch (Exception ex)

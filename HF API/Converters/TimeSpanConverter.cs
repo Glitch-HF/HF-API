@@ -12,7 +12,7 @@ namespace HF_API.Converters
     {
         /// <inheritdoc/>
         public override TimeSpan ReadJson(JsonReader reader, Type objectType, [AllowNull] TimeSpan existingValue, bool hasExistingValue, JsonSerializer serializer) =>
-            TimeSpan.FromSeconds((reader.Value as string ?? "").TryParseLong());
+            TimeSpan.FromSeconds((reader.Value?.ToString() ?? "").TryParseLong());
 
         /// <inheritdoc/>
         public override void WriteJson(JsonWriter writer, [AllowNull] TimeSpan value, JsonSerializer serializer) => writer.WriteValue((long)value.TotalSeconds);

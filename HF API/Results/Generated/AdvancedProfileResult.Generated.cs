@@ -30,7 +30,7 @@ namespace HF_API.Results
         /// <summary>
         /// True if the user has turned on invisible status.
         /// <summary>
-        [JsonProperty("invisible"), JsonConverter(typeof(BooleanConverter))]
+        [JsonProperty("invisible"), JsonConverter(typeof(BoolConverter))]
         public bool IsInvisible { get; set; }
 
         /// <summary>
