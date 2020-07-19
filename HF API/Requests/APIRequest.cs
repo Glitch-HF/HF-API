@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Collections.Concurrent;
 
 namespace HF_API.Requests
 {
@@ -55,6 +56,77 @@ namespace HF_API.Requests
         {
             KeyValuePair.Create("asks", JsonConvert.SerializeObject(new Dictionary<string, Dictionary<string, object>> { { Ask.ToString().ToLower(), Parameters } }))
         });
+
+        /// <summary>
+        /// Adds the result parameters to the Parameter collection.
+        /// </summary>
+        protected virtual void AddResultParameters() { }
+
+        /// <summary>
+        /// For caching parameter result sets.
+        /// </summary>
+        private static Dictionary<Type, Dictionary<string, object>> resultCache = new Dictionary<Type, Dictionary<string, object>>();
+
+        /// <summary>
+        /// Lock object for cache editing.
+        /// </summary>
+        private static object cacheLock = new object();
+
+        /// <summary>
+        /// Lock object for cache editing.
+        /// </summary>
+        private static Dictionary<Type, object> cacheTypeLock = new Dictionary<Type, object>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="parameterName"></param>
+        /// <param name="include"></param>
+        protected void AddResultParameter<T>(string parameterName, bool include = true)
+        {
+            // If not including, just set to false to prevent any results
+            if (!include)
+            {
+                Parameters.Add(parameterName, include);
+                return;
+            }
+
+            var type = typeof(T);
+            if (!resultCache.ContainsKey(type))
+            {
+                lock (cacheLock)
+                {
+                    if (!resultCache.ContainsKey(type))
+                    {
+                        resultCache.TryAdd(type, new Dictionary<string, object>());
+                        cacheTypeLock.Add(type, new object());
+                    }
+                }
+            }
+
+            if (!resultCache[type].ContainsKey(parameterName))
+            {
+                lock (cacheTypeLock[type])
+                {
+                    if (!resultCache[type].ContainsKey(parameterName))
+                    {
+                        if (type.IsSubclassOf(typeof(APIResult)))
+                        {
+                            var result = Activator.CreateInstance<T>() as APIRequest;
+                            result.AddResultParameters();
+                            resultCache[type].Add(parameterName, result.Parameters);
+                        }
+                        else
+                        {
+                            resultCache[type].Add(parameterName, true);
+                        }
+                    }
+                }
+            }
+
+            Parameters.Add(parameterName, resultCache[type][parameterName]);
+        }
 
         /// <summary>
         /// Attempts to process the request.

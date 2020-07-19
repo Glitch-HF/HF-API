@@ -8,6 +8,8 @@
 
 using HF_API.Enums;
 using HF_API.Results;
+using System;
+using System.Drawing;
 using System.Net.Http;
 
 namespace HF_API.Requests
@@ -33,27 +35,27 @@ namespace HF_API.Requests
         /// <summary>
         /// Adds the result parameters to the list.
         /// <summary>
-        public virtual void AddResultParameters()
+        protected override void AddResultParameters()
         {
-            Parameters.Add("uid", true);
-            Parameters.Add("username", true);
-            Parameters.Add("postnum", true);
-            Parameters.Add("avatar", true);
-            Parameters.Add("avatardimensions", true);
-            Parameters.Add("avatartype", true);
-            Parameters.Add("usergroup", true);
-            Parameters.Add("displaygroup", true);
-            Parameters.Add("additionalgroups", true);
-            Parameters.Add("awards", true);
-            Parameters.Add("threadnum", true);
-            Parameters.Add("lastvisit", true);
-            Parameters.Add("usertitle", true);
-            Parameters.Add("website", true);
-            Parameters.Add("timeonline", true);
-            Parameters.Add("reputation", true);
-            Parameters.Add("referrals", true);
-            Parameters.Add("bytes", true);
-            Parameters.Add("vault", true);
+            AddResultParameter<int>("uid", true);
+            AddResultParameter<string>("username", true);
+            AddResultParameter<int>("postnum", true);
+            AddResultParameter<string>("avatar", true);
+            AddResultParameter<Size>("avatardimensions", true);
+            AddResultParameter<string>("avatartype", true);
+            AddResultParameter<int>("usergroup", true);
+            AddResultParameter<int>("displaygroup", true);
+            AddResultParameter<int[]>("additionalgroups", true);
+            AddResultParameter<int>("awards", true);
+            AddResultParameter<int>("threadnum", true);
+            AddResultParameter<DateTime>("lastvisit", true);
+            AddResultParameter<string>("usertitle", true);
+            AddResultParameter<string>("website", true);
+            AddResultParameter<TimeSpan>("timeonline", true);
+            AddResultParameter<int>("reputation", true);
+            AddResultParameter<int>("referrals", true);
+            AddResultParameter<decimal>("bytes", true);
+            AddResultParameter<decimal>("vault", true);
         }
 
     }

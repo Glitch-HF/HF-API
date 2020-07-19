@@ -139,7 +139,7 @@ namespace HF_API_AutoGen
                         type: methodType,
                         parameters: methodParams,
                         statements: methodStatements,
-                        hideBase: (method.Attribute("hidebase")?.Value ?? "false").ToLower() == "true"
+                        modifiers: $"public static{(hasBase ? " new" : "")}"
                     );
 
                     mainApiClass.AddMethod(
@@ -151,7 +151,7 @@ namespace HF_API_AutoGen
                         {
                             $"return {requestClass.Name}.{methodName}({string.Join(", ", new[] { "Client" }.Concat(methodParams.Skip(1).Select(param => param.Name)))});"
                         },
-                        isStatic: false
+                        modifiers: "public"
                     );
                 }
 
@@ -160,14 +160,14 @@ namespace HF_API_AutoGen
                 {
                     addResultParametersStatements.Add("base.AddResultParameters();");
                 }
-                addResultParametersStatements.AddRange(properties.Select(prop => new BlockStatement($"Parameters.Add(\"{prop.Attribute("name").Value}\", true);")));
+                addResultParametersStatements.AddRange(properties.Select(prop => new BlockStatement($"AddResultParameter<{prop.Attribute("type").Value}>(\"{prop.Attribute("name").Value}\", true);")));
                 requestClass.AddMethod(
                     name: "AddResultParameters",
-                    type: $"{(hasBase ? "override" : "virtual")} void",
+                    type: "void",
                     summary: new[] { "Adds the result parameters to the list." },
                     parameters: new List<MethodParameter>(),
                     statements: addResultParametersStatements.ToList(),
-                    isStatic: false
+                    modifiers: $"protected override"
                 );
 
                 foreach (var prop in properties)
@@ -182,6 +182,7 @@ namespace HF_API_AutoGen
                     if (customEnums.Contains(propType))
                     {
                         resultClass.AddUsings("HF_API.Enums");
+                        requestClass.AddUsings("HF_API.Enums");
                     }
                     else
                     {
@@ -189,9 +190,11 @@ namespace HF_API_AutoGen
                         {
                             case "datetime":
                                 resultClass.AddUsings("System");
+                                requestClass.AddUsings("System");
                                 break;
                             case "size":
                                 resultClass.AddUsings("System.Drawing");
+                                requestClass.AddUsings("System.Drawing");
                                 break;
                         }
                     }

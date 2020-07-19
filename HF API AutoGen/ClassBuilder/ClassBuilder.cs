@@ -144,15 +144,14 @@ namespace HF_API_AutoGen
         /// <param name="parameters"></param>
         /// <param name="statements"></param>
         /// <param name="hideBase"></param>
-        public void AddMethod(string name, string type, string[] summary, List<MethodParameter> parameters, List<BlockStatement> statements, bool hideBase = false, bool isStatic = true) => Methods.Add(new ClassMethod
+        public void AddMethod(string name, string type, string[] summary, List<MethodParameter> parameters, List<BlockStatement> statements, string modifiers = "public static") => Methods.Add(new ClassMethod
         {
             Name = name,
             Type = type,
             Summary = summary,
             Parameters = parameters.ToArray(),
             BlockStatements = statements.ToArray(),
-            HideBase = hideBase,
-            IsStatic = isStatic
+            Modifiers = modifiers
         });
 
         #region Generate Helpers
@@ -258,7 +257,7 @@ namespace HF_API_AutoGen
                     builder.AppendLine($"{Tab}/// <param name=\"{parameter.Name}\">{parameter.Description}</param>");
                     paramList.Add($"{parameter.Type} {parameter.Name}{(string.IsNullOrWhiteSpace(parameter.Default) ? "" : $" = {parameter.Default}")}");
                 }
-                builder.AppendLine($"{Tab}public {(method.HideBase ? "new " : "")}{(method.IsStatic ? "static " : "")}{method.Type} {method.Name}({string.Join(", ", paramList)})");
+                builder.AppendLine($"{Tab}{method.Modifiers} {method.Type} {method.Name}({string.Join(", ", paramList)})");
                 builder.AppendLine($"{Tab}{{");
                 Indent(1);
                 foreach(var block in method.BlockStatements)

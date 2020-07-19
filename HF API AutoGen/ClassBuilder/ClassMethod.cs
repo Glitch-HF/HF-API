@@ -18,14 +18,9 @@
         public string[] Summary { get; set; }
 
         /// <summary>
-        /// Set to true to hide with the new keyword.
+        /// The method modifiers.
         /// </summary>
-        public bool HideBase { get; set; }
-
-        /// <summary>
-        /// Set to true to hide with the new keyword.
-        /// </summary>
-        public bool IsStatic { get; set; }
+        public string Modifiers { get; set; }
 
         /// <summary>
         /// The method's parameters.

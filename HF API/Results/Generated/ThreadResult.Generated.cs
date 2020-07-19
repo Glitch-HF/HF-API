@@ -73,7 +73,7 @@ namespace HF_API.Results
         /// The id of the first post.
         /// <summary>
         [JsonProperty("firstpost")]
-        public int FirstPostId { get; set; }
+        public long FirstPostId { get; set; }
 
         /// <summary>
         /// The time of the last post.

@@ -8,6 +8,7 @@
 
 using HF_API.Enums;
 using HF_API.Results;
+using System;
 using System.Net.Http;
 
 namespace HF_API.Requests
@@ -19,7 +20,7 @@ namespace HF_API.Requests
         /// Requires <see cref="APIPermission.ADV" />
         /// <summary>
         /// <param name="client">The client to use to process this request.</param>
-        public new static AdvancedProfileResult Read(HttpClient client)
+        public static new AdvancedProfileResult Read(HttpClient client)
         {
             var request = new AdvancedProfileRequest();
             request.Type = RequestType.Read;
@@ -30,14 +31,14 @@ namespace HF_API.Requests
         /// <summary>
         /// Adds the result parameters to the list.
         /// <summary>
-        public override void AddResultParameters()
+        protected override void AddResultParameters()
         {
             base.AddResultParameters();
-            Parameters.Add("lastactive", true);
-            Parameters.Add("unreadpms", true);
-            Parameters.Add("invisible", true);
-            Parameters.Add("totalpms", true);
-            Parameters.Add("warningpoints", true);
+            AddResultParameter<DateTime>("lastactive", true);
+            AddResultParameter<int>("unreadpms", true);
+            AddResultParameter<bool>("invisible", true);
+            AddResultParameter<int>("totalpms", true);
+            AddResultParameter<decimal>("warningpoints", true);
         }
 
     }

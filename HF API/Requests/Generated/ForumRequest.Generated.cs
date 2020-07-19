@@ -35,12 +35,12 @@ namespace HF_API.Requests
         /// <summary>
         /// Adds the result parameters to the list.
         /// <summary>
-        public virtual void AddResultParameters()
+        protected override void AddResultParameters()
         {
-            Parameters.Add("fid", true);
-            Parameters.Add("name", true);
-            Parameters.Add("description", true);
-            Parameters.Add("type", true);
+            AddResultParameter<int>("fid", true);
+            AddResultParameter<string>("name", true);
+            AddResultParameter<string>("description", true);
+            AddResultParameter<ForumType>("type", true);
         }
 
     }

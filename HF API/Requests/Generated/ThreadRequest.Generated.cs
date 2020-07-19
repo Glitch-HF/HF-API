@@ -8,6 +8,7 @@
 
 using HF_API.Enums;
 using HF_API.Results;
+using System;
 using System.Net.Http;
 
 namespace HF_API.Requests
@@ -73,26 +74,26 @@ namespace HF_API.Requests
         /// <summary>
         /// Adds the result parameters to the list.
         /// <summary>
-        public virtual void AddResultParameters()
+        protected override void AddResultParameters()
         {
-            Parameters.Add("tid", true);
-            Parameters.Add("fid", true);
-            Parameters.Add("subject", true);
-            Parameters.Add("prefix", true);
-            Parameters.Add("icon", true);
-            Parameters.Add("poll", true);
-            Parameters.Add("uid", true);
-            Parameters.Add("username", true);
-            Parameters.Add("dateline", true);
-            Parameters.Add("firstpost", true);
-            Parameters.Add("lastpost", true);
-            Parameters.Add("lastposter", true);
-            Parameters.Add("lastposteruid", true);
-            Parameters.Add("views", true);
-            Parameters.Add("numreplies", true);
-            Parameters.Add("closed", true);
-            Parameters.Add("sticky", true);
-            Parameters.Add("bestpid", true);
+            AddResultParameter<int>("tid", true);
+            AddResultParameter<int>("fid", true);
+            AddResultParameter<string>("subject", true);
+            AddResultParameter<int>("prefix", true);
+            AddResultParameter<int>("icon", true);
+            AddResultParameter<int>("poll", true);
+            AddResultParameter<int>("uid", true);
+            AddResultParameter<string>("username", true);
+            AddResultParameter<DateTime>("dateline", true);
+            AddResultParameter<long>("firstpost", true);
+            AddResultParameter<DateTime>("lastpost", true);
+            AddResultParameter<string>("lastposter", true);
+            AddResultParameter<int>("lastposteruid", true);
+            AddResultParameter<int>("views", true);
+            AddResultParameter<int>("numreplies", true);
+            AddResultParameter<bool>("closed", true);
+            AddResultParameter<bool>("sticky", true);
+            AddResultParameter<int>("bestpid", true);
         }
 
     }
