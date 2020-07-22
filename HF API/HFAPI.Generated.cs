@@ -183,78 +183,78 @@ namespace HF_API
         /// Creates a new contract initiated by the current token user with the specified parameters.
         /// Requires <see cref="APIPermission.CONTRACTS" />
         /// <summary>
-        /// <param name="userId"></param>
-        /// <param name="position"></param>
-        /// <param name="terms"></param>
-        /// <param name="yourProduct"></param>
-        /// <param name="yourCurrency"></param>
-        /// <param name="yourAmount"></param>
-        /// <param name="theirProduct"></param>
-        /// <param name="theirCurrency"></param>
-        /// <param name="theirAmount"></param>
-        /// <param name="threadId"></param>
-        /// <param name="middlemanId"></param>
-        /// <param name="timeoutDays"></param>
-        /// <param name="isPublic"></param>
-        /// <param name="paymentAddress"></param>
+        /// <param name="userId">The id of the other user to begin the contract with.</param>
+        /// <param name="position">The current user's position in the contract.</param>
+        /// <param name="terms">The terms of the contract.</param>
+        /// <param name="yourProduct">The user's product.</param>
+        /// <param name="yourCurrency">The user's currency.</param>
+        /// <param name="yourAmount">The user's amount (and currency if ContractCurrency.OTHER).</param>
+        /// <param name="theirProduct">The other user's product.</param>
+        /// <param name="theirCurrency">The other user's currency.</param>
+        /// <param name="theirAmount">The other user's amount (and currency if ContractCurrency.OTHER).</param>
+        /// <param name="threadId">The id of the thread to link this contract to.</param>
+        /// <param name="middlemanId">The user id of the middleman.</param>
+        /// <param name="timeoutDays">The time (in days) that the contract will expire.</param>
+        /// <param name="isPublic">Whether this is a public contract.</param>
+        /// <param name="paymentAddress">The payment address.</param>
         public ContractResult ContractCreate(int userId, ContractPosition position, string terms, string yourProduct = null, ContractCurrency yourCurrency = ContractCurrency.NONE, string yourAmount = null, string theirProduct = null, ContractCurrency theirCurrency = ContractCurrency.NONE, string theirAmount = null, int threadId = 0, int middlemanId = 0, int timeoutDays = 0, bool isPublic = false, string paymentAddress = null) => ContractRequest.Create(Client, userId, position, terms, yourProduct, yourCurrency, yourAmount, theirProduct, theirCurrency, theirAmount, threadId, middlemanId, timeoutDays, isPublic, paymentAddress);
 
         /// <summary>
         /// Undo a newly created contract.
         /// Requires <see cref="APIPermission.CONTRACTS" />
         /// <summary>
-        /// <param name="contractId"></param>
+        /// <param name="contractId">The id of the contract.</param>
         public ContractResult ContractUndo(int contractId) => ContractRequest.Undo(Client, contractId);
 
         /// <summary>
         /// Deny a new contract.
         /// Requires <see cref="APIPermission.CONTRACTS" />
         /// <summary>
-        /// <param name="contractId"></param>
+        /// <param name="contractId">The id of the contract.</param>
         public ContractResult ContractDeny(int contractId) => ContractRequest.Deny(Client, contractId);
 
         /// <summary>
         /// Approve a new contract.
         /// Requires <see cref="APIPermission.CONTRACTS" />
         /// <summary>
-        /// <param name="contractId"></param>
-        /// <param name="paymentAddress"></param>
+        /// <param name="contractId">The id of the contract.</param>
+        /// <param name="paymentAddress">The payment address.</param>
         public ContractResult ContractApprove(int contractId, string paymentAddress = null) => ContractRequest.Approve(Client, contractId, paymentAddress);
 
         /// <summary>
         /// Deny a contract as middleman.
         /// Requires <see cref="APIPermission.CONTRACTS" />
         /// <summary>
-        /// <param name="contractId"></param>
+        /// <param name="contractId">The id of the contract.</param>
         public ContractResult ContractMiddlemanDeny(int contractId) => ContractRequest.MiddlemanDeny(Client, contractId);
 
         /// <summary>
         /// Approve a contract as middleman.
         /// Requires <see cref="APIPermission.CONTRACTS" />
         /// <summary>
-        /// <param name="contractId"></param>
+        /// <param name="contractId">The id of the contract.</param>
         public ContractResult ContractMiddlemanApprove(int contractId) => ContractRequest.MiddlemanApprove(Client, contractId);
 
         /// <summary>
         /// Cancel as contract (spawned from contract template) as Vendor.
         /// Requires <see cref="APIPermission.CONTRACTS" />
         /// <summary>
-        /// <param name="contractId"></param>
+        /// <param name="contractId">The id of the contract.</param>
         public ContractResult ContractVendorCancel(int contractId) => ContractRequest.VendorCancel(Client, contractId);
 
         /// <summary>
         /// Request cancel (requires both parties to cancel).
         /// Requires <see cref="APIPermission.CONTRACTS" />
         /// <summary>
-        /// <param name="contractId"></param>
+        /// <param name="contractId">The id of the contract.</param>
         public ContractResult ContractCancel(int contractId) => ContractRequest.Cancel(Client, contractId);
 
         /// <summary>
         /// Mark a contract as complete.
         /// Requires <see cref="APIPermission.CONTRACTS" />
         /// <summary>
-        /// <param name="contractId"></param>
-        /// <param name="txn"></param>
+        /// <param name="contractId">The id of the contract.</param>
+        /// <param name="txn">The transaction.</param>
         public ContractResult ContractComplete(int contractId, string txn = null) => ContractRequest.Complete(Client, contractId, txn);
 
         /// <summary>

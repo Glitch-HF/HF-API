@@ -205,57 +205,57 @@
     </method>
     <method name="Create" apiType="Write" scope="CONTRACTS" desc="Creates a new contract initiated by the current token user with the specified parameters.">
       <param name="_action" value="new" const="true" />
-      <param name="_uid" type="int" var="userId" description="The id of the other user to begin the contract with." />
-      <param name="_position" type="ContractPosition" var="position" description="The current user's position in the contract." />
-      <param name="_terms" type="string" var="terms" description="The terms of the contract." />
+      <param name="_uid" type="int" var="userId" desc="The id of the other user to begin the contract with." />
+      <param name="_position" type="ContractPosition" var="position" desc="The current user's position in the contract." />
+      <param name="_terms" type="string" var="terms" desc="The terms of the contract." />
 
-      <param name="_yourproduct" type="string" var="yourProduct" description="The user's product." default="null" ifNotDefault="yourProduct" />
-      <param name="_yourcurrency" type="ContractCurrency" var="yourCurrency" description="The user's currency." default="ContractCurrency.NONE" ifNotDefault="yourCurrency.ToString()" />
-      <param name="_youramount" type="string" var="yourAmount" description="The user's amount (and currency if ContractCurrency.OTHER)." default="null" ifNotDefault="yourAmount" />
+      <param name="_yourproduct" type="string" var="yourProduct" desc="The user's product." default="null" ifNotDefault="yourProduct" />
+      <param name="_yourcurrency" type="ContractCurrency" var="yourCurrency" desc="The user's currency." default="ContractCurrency.NONE" ifNotDefault="yourCurrency.ToString()" />
+      <param name="_youramount" type="string" var="yourAmount" desc="The user's amount (and currency if ContractCurrency.OTHER)." default="null" ifNotDefault="yourAmount" />
 
-      <param name="_theirproduct" type="string" var="theirProduct" description="The other user's product." default="null" ifNotDefault="theirProduct" />
-      <param name="_theircurrency" type="ContractCurrency" var="theirCurrency" description="The other user's currency." default="ContractCurrency.NONE" ifNotDefault="theirCurrency.ToString()" />
-      <param name="_theiramount" type="string" var="theirAmount" description="The other user's amount (and currency if ContractCurrency.OTHER)." default="null" ifNotDefault="theirAmount" />
+      <param name="_theirproduct" type="string" var="theirProduct" desc="The other user's product." default="null" ifNotDefault="theirProduct" />
+      <param name="_theircurrency" type="ContractCurrency" var="theirCurrency" desc="The other user's currency." default="ContractCurrency.NONE" ifNotDefault="theirCurrency.ToString()" />
+      <param name="_theiramount" type="string" var="theirAmount" desc="The other user's amount (and currency if ContractCurrency.OTHER)." default="null" ifNotDefault="theirAmount" />
 
-      <param name="_tid" type="int" var="threadId" description="The id of the thread to link this contract to." default="0" ifNotDefault="threadId" />
-      <param name="_muid" type="int" var="middlemanId" description="The user id of the middleman." default="0" ifNotDefault="middlemanId" />
-      <param name="_timeout" type="int" var="timeoutDays" description="The time (in days) that the contract will expire." default="0" ifNotDefault="timeoutDays" />
-      <param name="_public" type="bool" var="isPublic" description="Whether this is a public contract." default="false" ifNotDefault="&quot;yes&quot;" />
-      <param name="_address" type="string" var="paymentAddress" description="The payment address." default="null" ifNotDefault="paymentAddress" />
+      <param name="_tid" type="int" var="threadId" desc="The id of the thread to link this contract to." default="0" ifNotDefault="threadId" />
+      <param name="_muid" type="int" var="middlemanId" desc="The user id of the middleman." default="0" ifNotDefault="middlemanId" />
+      <param name="_timeout" type="int" var="timeoutDays" desc="The time (in days) that the contract will expire." default="0" ifNotDefault="timeoutDays" />
+      <param name="_public" type="bool" var="isPublic" desc="Whether this is a public contract." default="false" ifNotDefault="&quot;yes&quot;" />
+      <param name="_address" type="string" var="paymentAddress" desc="The payment address." default="null" ifNotDefault="paymentAddress" />
     </method>
     <method name="Undo" apiType="Write" scope="CONTRACTS" desc="Undo a newly created contract.">
       <param name="_action" value="undo" const="true" />
-      <param name="_cid" type="int" var="contractId" description="The id of the contract." />
+      <param name="_cid" type="int" var="contractId" desc="The id of the contract." />
     </method>
     <method name="Deny" apiType="Write" scope="CONTRACTS" desc="Deny a new contract.">
       <param name="_action" value="deny" const="true" />
-      <param name="_cid" type="int" var="contractId" description="The id of the contract." />
+      <param name="_cid" type="int" var="contractId" desc="The id of the contract." />
     </method>
     <method name="Approve" apiType="Write" scope="CONTRACTS" desc="Approve a new contract.">
       <param name="_action" value="approve" const="true" />
-      <param name="_cid" type="int" var="contractId" description="The id of the contract." />
-      <param name="_address" type="string" var="paymentAddress" description="The payment address." default="null" ifNotDefault="paymentAddress" />
+      <param name="_cid" type="int" var="contractId" desc="The id of the contract." />
+      <param name="_address" type="string" var="paymentAddress" desc="The payment address." default="null" ifNotDefault="paymentAddress" />
     </method>
     <method name="MiddlemanDeny" apiType="Write" scope="CONTRACTS" desc="Deny a contract as middleman.">
       <param name="_action" value="middleman_deny" const="true" />
-      <param name="_cid" type="int" var="contractId" description="The id of the contract." />
+      <param name="_cid" type="int" var="contractId" desc="The id of the contract." />
     </method>
     <method name="MiddlemanApprove" apiType="Write" scope="CONTRACTS" desc="Approve a contract as middleman.">
       <param name="_action" value="middleman_approve" const="true" />
-      <param name="_cid" type="int" var="contractId" description="The id of the contract." />
+      <param name="_cid" type="int" var="contractId" desc="The id of the contract." />
     </method>
     <method name="VendorCancel" apiType="Write" scope="CONTRACTS" desc="Cancel as contract (spawned from contract template) as Vendor.">
       <param name="_action" value="vendor_cancel" const="true"  />
-      <param name="_cid" type="int" var="contractId" description="The id of the contract." />
+      <param name="_cid" type="int" var="contractId" desc="The id of the contract." />
     </method>
     <method name="Cancel" apiType="Write" scope="CONTRACTS" desc="Request cancel (requires both parties to cancel).">
       <param name="_action" value="cancel" const="true"  />
-      <param name="_cid" type="int" var="contractId" description="The id of the contract." />
+      <param name="_cid" type="int" var="contractId" desc="The id of the contract." />
     </method>
     <method name="Complete" apiType="Write" scope="CONTRACTS" desc="Mark a contract as complete.">
       <param name="_action" value="complete" const="true"  />
-      <param name="_cid" type="int" var="contractId" description="The id of the contract." />
-      <param name="_txn" type="string" var="txn" description="The transaction." default="null" ifNotDefault="txn" />
+      <param name="_cid" type="int" var="contractId" desc="The id of the contract." />
+      <param name="_txn" type="string" var="txn" desc="The transaction." default="null" ifNotDefault="txn" />
     </method>
     <properties>
       <!-- Header fields -->

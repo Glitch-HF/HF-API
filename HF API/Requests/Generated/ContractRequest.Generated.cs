@@ -71,20 +71,20 @@ namespace HF_API.Requests
         /// Requires <see cref="APIPermission.CONTRACTS" />
         /// <summary>
         /// <param name="client">The client to use to process this request.</param>
-        /// <param name="userId"></param>
-        /// <param name="position"></param>
-        /// <param name="terms"></param>
-        /// <param name="yourProduct"></param>
-        /// <param name="yourCurrency"></param>
-        /// <param name="yourAmount"></param>
-        /// <param name="theirProduct"></param>
-        /// <param name="theirCurrency"></param>
-        /// <param name="theirAmount"></param>
-        /// <param name="threadId"></param>
-        /// <param name="middlemanId"></param>
-        /// <param name="timeoutDays"></param>
-        /// <param name="isPublic"></param>
-        /// <param name="paymentAddress"></param>
+        /// <param name="userId">The id of the other user to begin the contract with.</param>
+        /// <param name="position">The current user's position in the contract.</param>
+        /// <param name="terms">The terms of the contract.</param>
+        /// <param name="yourProduct">The user's product.</param>
+        /// <param name="yourCurrency">The user's currency.</param>
+        /// <param name="yourAmount">The user's amount (and currency if ContractCurrency.OTHER).</param>
+        /// <param name="theirProduct">The other user's product.</param>
+        /// <param name="theirCurrency">The other user's currency.</param>
+        /// <param name="theirAmount">The other user's amount (and currency if ContractCurrency.OTHER).</param>
+        /// <param name="threadId">The id of the thread to link this contract to.</param>
+        /// <param name="middlemanId">The user id of the middleman.</param>
+        /// <param name="timeoutDays">The time (in days) that the contract will expire.</param>
+        /// <param name="isPublic">Whether this is a public contract.</param>
+        /// <param name="paymentAddress">The payment address.</param>
         public static ContractResult Create(HttpClient client, int userId, ContractPosition position, string terms, string yourProduct = null, ContractCurrency yourCurrency = ContractCurrency.NONE, string yourAmount = null, string theirProduct = null, ContractCurrency theirCurrency = ContractCurrency.NONE, string theirAmount = null, int threadId = 0, int middlemanId = 0, int timeoutDays = 0, bool isPublic = false, string paymentAddress = null)
         {
             var request = new ContractRequest();
@@ -146,7 +146,7 @@ namespace HF_API.Requests
         /// Requires <see cref="APIPermission.CONTRACTS" />
         /// <summary>
         /// <param name="client">The client to use to process this request.</param>
-        /// <param name="contractId"></param>
+        /// <param name="contractId">The id of the contract.</param>
         public static ContractResult Undo(HttpClient client, int contractId)
         {
             var request = new ContractRequest();
@@ -162,7 +162,7 @@ namespace HF_API.Requests
         /// Requires <see cref="APIPermission.CONTRACTS" />
         /// <summary>
         /// <param name="client">The client to use to process this request.</param>
-        /// <param name="contractId"></param>
+        /// <param name="contractId">The id of the contract.</param>
         public static ContractResult Deny(HttpClient client, int contractId)
         {
             var request = new ContractRequest();
@@ -178,8 +178,8 @@ namespace HF_API.Requests
         /// Requires <see cref="APIPermission.CONTRACTS" />
         /// <summary>
         /// <param name="client">The client to use to process this request.</param>
-        /// <param name="contractId"></param>
-        /// <param name="paymentAddress"></param>
+        /// <param name="contractId">The id of the contract.</param>
+        /// <param name="paymentAddress">The payment address.</param>
         public static ContractResult Approve(HttpClient client, int contractId, string paymentAddress = null)
         {
             var request = new ContractRequest();
@@ -199,7 +199,7 @@ namespace HF_API.Requests
         /// Requires <see cref="APIPermission.CONTRACTS" />
         /// <summary>
         /// <param name="client">The client to use to process this request.</param>
-        /// <param name="contractId"></param>
+        /// <param name="contractId">The id of the contract.</param>
         public static ContractResult MiddlemanDeny(HttpClient client, int contractId)
         {
             var request = new ContractRequest();
@@ -215,7 +215,7 @@ namespace HF_API.Requests
         /// Requires <see cref="APIPermission.CONTRACTS" />
         /// <summary>
         /// <param name="client">The client to use to process this request.</param>
-        /// <param name="contractId"></param>
+        /// <param name="contractId">The id of the contract.</param>
         public static ContractResult MiddlemanApprove(HttpClient client, int contractId)
         {
             var request = new ContractRequest();
@@ -231,7 +231,7 @@ namespace HF_API.Requests
         /// Requires <see cref="APIPermission.CONTRACTS" />
         /// <summary>
         /// <param name="client">The client to use to process this request.</param>
-        /// <param name="contractId"></param>
+        /// <param name="contractId">The id of the contract.</param>
         public static ContractResult VendorCancel(HttpClient client, int contractId)
         {
             var request = new ContractRequest();
@@ -247,7 +247,7 @@ namespace HF_API.Requests
         /// Requires <see cref="APIPermission.CONTRACTS" />
         /// <summary>
         /// <param name="client">The client to use to process this request.</param>
-        /// <param name="contractId"></param>
+        /// <param name="contractId">The id of the contract.</param>
         public static ContractResult Cancel(HttpClient client, int contractId)
         {
             var request = new ContractRequest();
@@ -263,8 +263,8 @@ namespace HF_API.Requests
         /// Requires <see cref="APIPermission.CONTRACTS" />
         /// <summary>
         /// <param name="client">The client to use to process this request.</param>
-        /// <param name="contractId"></param>
-        /// <param name="txn"></param>
+        /// <param name="contractId">The id of the contract.</param>
+        /// <param name="txn">The transaction.</param>
         public static ContractResult Complete(HttpClient client, int contractId, string txn = null)
         {
             var request = new ContractRequest();
