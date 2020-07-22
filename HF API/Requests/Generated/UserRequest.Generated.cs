@@ -16,22 +16,24 @@ using System.Net.Http;
 
 namespace HF_API.Requests
 {
-    internal partial class ProfileRequest : APIRequest
+    internal partial class UserRequest : APIRequest
     {
         /// <inheritdoc />
-        protected override RequestAsk Ask => RequestAsk.Me;
+        protected override RequestAsk Ask => RequestAsk.Users;
 
         /// <summary>
-        /// Reads the basic profile information from the current token session.
-        /// Requires <see cref="APIPermission.BASIC" />
+        /// Gets the user from the specified user id.
+        /// Requires <see cref="APIPermission.USERS" />
         /// <summary>
         /// <param name="client">The client to use to process this request.</param>
-        public static ProfileResult Read(HttpClient client)
+        /// <param name="userId">The user id.</param>
+        public static UserResult Get(HttpClient client, int userId)
         {
-            var request = new ProfileRequest();
+            var request = new UserRequest();
             request.Type = RequestType.Read;
+            request.Parameters.Add("_uid", userId);
             request.AddResultParameters();
-            return request.ProcessRequest<ProfileResult>(client);
+            return request.ProcessRequest<UserResult>(client);
         }
 
         /// <summary>
@@ -51,14 +53,12 @@ namespace HF_API.Requests
             newParams.Add(AddResultParameter<int[]>("additionalgroups", true));
             newParams.Add(AddResultParameter<int>("awards", true));
             newParams.Add(AddResultParameter<int>("threadnum", true));
-            newParams.Add(AddResultParameter<DateTime>("lastvisit", true));
             newParams.Add(AddResultParameter<string>("usertitle", true));
             newParams.Add(AddResultParameter<string>("website", true));
             newParams.Add(AddResultParameter<TimeSpan>("timeonline", true));
             newParams.Add(AddResultParameter<int>("reputation", true));
             newParams.Add(AddResultParameter<int>("referrals", true));
-            newParams.Add(AddResultParameter<decimal>("bytes", true));
-            newParams.Add(AddResultParameter<decimal>("vault", true));
+            newParams.Add(AddResultParameter<decimal>("myps", true));
             return newParams.ToDictionary(_ => _.Key, _ => _.Value);
         }
 

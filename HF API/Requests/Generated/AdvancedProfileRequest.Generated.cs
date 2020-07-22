@@ -9,6 +9,8 @@
 using HF_API.Enums;
 using HF_API.Results;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 
 namespace HF_API.Requests
@@ -31,14 +33,16 @@ namespace HF_API.Requests
         /// <summary>
         /// Adds the result parameters to the list.
         /// <summary>
-        protected override void AddResultParameters()
+        internal override Dictionary<string, object> AddResultParameters()
         {
-            base.AddResultParameters();
-            AddResultParameter<DateTime>("lastactive", true);
-            AddResultParameter<int>("unreadpms", true);
-            AddResultParameter<bool>("invisible", true);
-            AddResultParameter<int>("totalpms", true);
-            AddResultParameter<decimal>("warningpoints", true);
+            var newParams = new List<KeyValuePair<string, object>>();
+            newParams.AddRange(base.AddResultParameters());
+            newParams.Add(AddResultParameter<DateTime>("lastactive", true));
+            newParams.Add(AddResultParameter<int>("unreadpms", true));
+            newParams.Add(AddResultParameter<bool>("invisible", true));
+            newParams.Add(AddResultParameter<int>("totalpms", true));
+            newParams.Add(AddResultParameter<decimal>("warningpoints", true));
+            return newParams.ToDictionary(_ => _.Key, _ => _.Value);
         }
 
     }

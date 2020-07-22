@@ -257,16 +257,30 @@ namespace HF_API_AutoGen
                     builder.AppendLine($"{Tab}/// <param name=\"{parameter.Name}\">{parameter.Description}</param>");
                     paramList.Add($"{parameter.Type} {parameter.Name}{(string.IsNullOrWhiteSpace(parameter.Default) ? "" : $" = {parameter.Default}")}");
                 }
-                builder.AppendLine($"{Tab}{method.Modifiers} {method.Type} {method.Name}({string.Join(", ", paramList)})");
-                builder.AppendLine($"{Tab}{{");
-                Indent(1);
-                foreach(var block in method.BlockStatements)
+                builder.Append($"{Tab}{method.Modifiers} {method.Type} {method.Name}({string.Join(", ", paramList)})");
+
+                var firstBlock = method.BlockStatements.FirstOrDefault();
+                if (method.BlockStatements.Length == 1 && firstBlock.GetType() == typeof(BlockStatement))
                 {
-                    block.Indentation = tabIndex;
-                    builder.AppendLine(block.Generate());
+                    firstBlock.Indentation = 0;
+                    var statement = firstBlock.Generate();
+                    statement = statement.ToLower().StartsWith("return ") ? statement["return ".Length..] : statement;
+                    builder.Append($" => {statement}");
+                    builder.AppendLine();
                 }
-                Indent(-1);
-                builder.AppendLine($"{Tab}}}");
+                else
+                {
+                    builder.AppendLine();
+                    builder.AppendLine($"{Tab}{{");
+                    Indent(1);
+                    foreach (var block in method.BlockStatements)
+                    {
+                        block.Indentation = tabIndex;
+                        builder.AppendLine(block.Generate());
+                    }
+                    Indent(-1);
+                    builder.AppendLine($"{Tab}}}");
+                }
                 builder.AppendLine();
             }
         }

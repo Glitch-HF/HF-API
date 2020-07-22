@@ -9,14 +9,13 @@
 using HF_API.Converters;
 using HF_API.Requests;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 
 namespace HF_API.Results
 {
-    public partial class ProfileResult : APIResult
+    public partial class UserResult : APIResult
     {
         /// <summary>
         /// The user's id.
@@ -85,12 +84,6 @@ namespace HF_API.Results
         public int ThreadCount { get; set; }
 
         /// <summary>
-        /// The unix time stamp of the last visit.
-        /// <summary>
-        [JsonProperty("lastvisit"), JsonConverter(typeof(UnixDateTimeConverter))]
-        public DateTime LastVisit { get; set; }
-
-        /// <summary>
         /// The user title.
         /// <summary>
         [JsonProperty("usertitle")]
@@ -123,19 +116,13 @@ namespace HF_API.Results
         /// <summary>
         /// The total number of bytes currently held.
         /// <summary>
-        [JsonProperty("bytes")]
+        [JsonProperty("myps")]
         public decimal BytesCount { get; set; }
 
         /// <summary>
-        /// The total number of bytes in the user's vault.
+        /// Gets the result parameter set from a new <see cref="UserRequest" /> instance.
         /// <summary>
-        [JsonProperty("vault")]
-        public decimal VaultCount { get; set; }
-
-        /// <summary>
-        /// Gets the result parameter set from a new <see cref="ProfileRequest" /> instance.
-        /// <summary>
-        internal override Dictionary<string, object> GetResultParameters() => (Activator.CreateInstance<ProfileRequest>() as APIRequest).AddResultParameters();
+        internal override Dictionary<string, object> GetResultParameters() => (Activator.CreateInstance<UserRequest>() as APIRequest).AddResultParameters();
 
     }
 }

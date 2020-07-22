@@ -8,6 +8,8 @@
 
 using HF_API.Enums;
 using HF_API.Results;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 
 namespace HF_API.Requests
@@ -35,12 +37,14 @@ namespace HF_API.Requests
         /// <summary>
         /// Adds the result parameters to the list.
         /// <summary>
-        protected override void AddResultParameters()
+        internal override Dictionary<string, object> AddResultParameters()
         {
-            AddResultParameter<int>("fid", true);
-            AddResultParameter<string>("name", true);
-            AddResultParameter<string>("description", true);
-            AddResultParameter<ForumType>("type", true);
+            var newParams = new List<KeyValuePair<string, object>>();
+            newParams.Add(AddResultParameter<int>("fid", true));
+            newParams.Add(AddResultParameter<string>("name", true));
+            newParams.Add(AddResultParameter<string>("description", true));
+            newParams.Add(AddResultParameter<ForumType>("type", true));
+            return newParams.ToDictionary(_ => _.Key, _ => _.Value);
         }
 
     }

@@ -3,6 +3,7 @@ using HF_API.Results;
 using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace HF_API_AutoGen
 {
@@ -35,7 +36,7 @@ namespace HF_API_AutoGen
                 else
                 {
                     Console.WriteLine("Failed to acquire authentication token from code in file: " + codeFile);
-                    Console.WriteLine(authToken.Message);
+                    Console.WriteLine(authToken.ExceptionMessage);
                     Console.WriteLine("Press any key to exit...");
                     Console.ReadKey();
                     Environment.Exit(1);
@@ -46,15 +47,33 @@ namespace HF_API_AutoGen
 
             //--------------------- Reads -------------------------
 
+            // Profile
             ProfileResult profile = api.ProfileRead();
+            AdvancedProfileResult AdvancedProfileRead = api.AdvancedProfileRead();
 
-            AdvancedProfileResult advancedProfile = api.AdvancedProfileRead();
+            // Forums
+            ForumResult ForumGet = api.ForumGet(2);
 
-            ForumResult forum = api.ForumGet(2);
+            // Threads
+            ThreadResult ThreadGet = api.ThreadGet(6083735);
+                // Automatically loads nested result types
+                UserResult firstPostUser = ThreadGet.FirstPost.User;
+            ThreadResult[] ThreadSearchByUserId = api.ThreadSearchByUserId(authToken.UserId, 55709, 3);
 
-            ThreadResult thread = api.ThreadGet(6095994);
+            // Posts
+            PostResult PostGet = api.PostGet(59991944);
+            PostResult[] PostSearchByThreadId = api.PostSearchByThreadId(6083735, 1, 2);
+            PostResult[] PostSearchByUserId = api.PostSearchByUserId(55709, 1, 4);
 
-            ThreadResult[] threadSearch = api.ThreadSearchByUserId(authToken.UserId, 1, 10);
+            // Byte Transactions
+            ByteTransactionResult[] ByteTransactionSearchByUserId = api.ByteTransactionSearchByUserId(55709, 1, 2);
+            ByteTransactionResult[] ByteTransactionSearchByFromUserId = api.ByteTransactionSearchByFromUserId(55709, 1, 3);
+            ByteTransactionResult[] ByteTransactionSearchByToUserId = api.ByteTransactionSearchByToUserId(55709, 1, 4);
+            ByteTransactionResult ByteTransactionGet = api.ByteTransactionGet(ByteTransactionSearchByUserId.First().Id);
+
+            // Contracts
+            ContractResult[] ContractSearchByUserId = api.ContractSearchByUserId(55709, 1, 1);
+            ContractResult ContractGet = api.ContractGet(ContractSearchByUserId.First().Id);
 
             //--------------------- Writes -------------------------
 

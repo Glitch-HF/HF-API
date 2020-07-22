@@ -7,9 +7,11 @@
 #region Auto-Generated Code
 
 using HF_API.Converters;
+using HF_API.Requests;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
+using System.Collections.Generic;
 
 namespace HF_API.Results
 {
@@ -70,10 +72,10 @@ namespace HF_API.Results
         public DateTime CreationTime { get; set; }
 
         /// <summary>
-        /// The id of the first post.
+        /// The first post in the thread.
         /// <summary>
         [JsonProperty("firstpost")]
-        public long FirstPostId { get; set; }
+        public PostResult FirstPost { get; set; }
 
         /// <summary>
         /// The time of the last post.
@@ -122,6 +124,11 @@ namespace HF_API.Results
         /// <summary>
         [JsonProperty("bestpid")]
         public int BestPostId { get; set; }
+
+        /// <summary>
+        /// Gets the result parameter set from a new <see cref="ThreadRequest" /> instance.
+        /// <summary>
+        internal override Dictionary<string, object> GetResultParameters() => (Activator.CreateInstance<ThreadRequest>() as APIRequest).AddResultParameters();
 
     }
 }

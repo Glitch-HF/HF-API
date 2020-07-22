@@ -20,36 +20,36 @@
       <property name="username" type="string" var="Username" desc="The username." />
       <property name="postnum" type="int" var="PostCount" desc="The number of posts made." />
       <property name="avatar" type="string" var="AvatarUrl" desc="The url or path to the user's avatar." />
-      <property name="avatardimensions" type="Size" var="AvatarDimensions" converter="AvatarSizeConverter" desc="The avatar dimensions." />
+      <property name="avatardimensions" type="Size" var="AvatarDimensions" desc="The avatar dimensions." />
       <property name="avatartype" type="string" var="AvatarType" desc="The avatar type." />
       <property name="usergroup" type="int" var="UserGroupId" desc="The primary user group id." />
       <property name="displaygroup" type="int" var="DisplayGroupId" desc="The display group id." />
-      <property name="additionalgroups" type="int[]" var="AdditionalGroupIds" converter="StringIntArrayConverter" desc="Comma-delimited list of secondary usergroups." />
+      <property name="additionalgroups" type="int[]" var="AdditionalGroupIds" desc="Comma-delimited list of secondary usergroups." />
       <property name="awards" type="int" var="Awards" desc="The number of awards received." />
       <property name="threadnum" type="int" var="ThreadCount" desc="The number of threads created." />
-      <property name="lastvisit" type="DateTime" var="LastVisit" converter="UnixDateTimeConverter" desc="The unix time stamp of the last visit." />
+      <property name="lastvisit" type="DateTime" var="LastVisit" desc="The unix time stamp of the last visit." />
       <property name="usertitle" type="string" var="UserTitle" desc="The user title." />
       <property name="website" type="string" var="Website" desc="The user website." />
-      <property name="timeonline" type="TimeSpan" var="TimeOnline" converter="TimeSpanConverter" desc="The accumulated time, in seconds, that the user has ever been online for." />
+      <property name="timeonline" type="TimeSpan" var="TimeOnline" desc="The accumulated time, in seconds, that the user has ever been online for." />
       <property name="reputation" type="int" var="ReputationCount" desc="The total number of reputation points." />
       <property name="referrals" type="int" var="ReferralsCount" desc="The total number of users referred." />
       <property name="bytes" type="decimal" var="BytesCount" desc="The total number of bytes currently held." />
       <property name="vault" type="decimal" var="VaultCount" desc="The total number of bytes in the user's vault." />
     </properties>
   </request>
-  
+
   <!-- Advanced Profile -->
   <request class="AdvancedProfile" inherits="Profile">
     <method name="Read" apiType="Read" hidebase="true" scope="ADV" desc="Reads the advanced profile information from the current token session." />
     <properties>
-      <property name="lastactive" type="DateTime" var="LastActive" converter="UnixDateTimeConverter" desc="The unix time stamp of the last time the user was active." />
+      <property name="lastactive" type="DateTime" var="LastActive" desc="The unix time stamp of the last time the user was active." />
       <property name="unreadpms" type="int" var="UnreadPMCount" desc="The total count of unread pms." />
-      <property name="invisible" type="bool" var="IsInvisible" converter="BoolConverter" desc="True if the user has turned on invisible status." />
+      <property name="invisible" type="bool" var="IsInvisible" desc="True if the user has turned on invisible status." />
       <property name="totalpms" type="int" var="TotalPMCount" desc="The total number of PMs this user has made." />
       <property name="warningpoints" type="decimal" var="WarningPointsCount" desc="The total number of warning points on this user." />
     </properties>
   </request>
-  
+
   <!-- Forums -->
   <request class="Forum" ask="Forums">
     <method name="Get" apiType="Read" scope="POSTS" desc="Gets the forum from the specified forum id.">
@@ -59,7 +59,7 @@
       <property name="fid" type="int" var="Id" desc="The forum id." />
       <property name="name" type="string" var="Name" desc="The name of the forum." />
       <property name="description" type="string" var="Description" desc="The description of the forum." />
-      <property name="type" type="ForumType" var="Type" converter="ForumTypeConverter" desc="The forum type (category or forum)." />
+      <property name="type" type="ForumType" var="Type" desc="The forum type (category or forum)." />
     </properties>
   </request>
 
@@ -68,10 +68,8 @@
     <method name="Get" apiType="Read" scope="POSTS" desc="Gets the thread from the specified thread id.">
       <param name="_tid" type="int" var="threadId" desc="The thread id." />
     </method>
-    <method name="SearchByUserId" apiType="Read" multi="true" scope="POSTS" desc="Searches all the threads made by the specified user.">
+    <method name="SearchByUserId" apiType="Read" multi="true" pages="true" scope="POSTS" desc="Searches all the threads made by the specified user.">
       <param name="_uid" type="int" var="userId" desc="The user id." />
-      <param name="_page" type="int" var="page" desc="The page number." />
-      <param name="_perpage" type="int" var="perPage" desc="The number of results per page." />
     </method>
     <method name="Create" apiType="Write" scope="POSTSWRITE" desc="Creates a new thread in the specified forum with the current token user as the author.">
       <param name="_fid" type="int" var="forumId" desc="The forum id." />
@@ -87,17 +85,294 @@
       <property name="poll" type="int" var="PollId" desc="The poll id." />
       <property name="uid" type="int" var="UserId" desc="The user id of the author." />
       <property name="username" type="string" var="Username" desc="The username of the thread author." />
-      <property name="dateline" type="DateTime" var="CreationTime" converter="UnixDateTimeConverter" desc="The time that the thread was created."/>
-      <property name="firstpost" type="long" var="FirstPostId" desc="The id of the first post."/>
-      <property name="lastpost" type="DateTime" var="LastPostTime" converter="UnixDateTimeConverter" desc="The time of the last post." />
+      <property name="dateline" type="DateTime" var="CreationTime" desc="The time that the thread was created."/>
+      <property name="firstpost" type="Post" var="FirstPost" desc="The first post in the thread."/>
+      <property name="lastpost" type="DateTime" var="LastPostTime" desc="The time of the last post." />
       <property name="lastposter" type="string" var="LastPostUsername" desc="The name of the user that made the last post." />
       <property name="lastposteruid" type="int" var="LastPostUid" desc="The id of the last poster." />
       <property name="views" type="int" var="ViewCount" desc="The total number of views."/>
       <property name="numreplies" type="int" var="ReplyCount" desc="The total number of replies."/>
-      <property name="closed" type="bool" var="IsClosed" converter="BoolConverter" desc="Whether the thread is closed or not." />
-      <property name="sticky" type="bool" var="IsSticky" converter="BoolConverter" desc="Whether the thread is sticky or not." />
+      <property name="closed" type="bool" var="IsClosed" desc="Whether the thread is closed or not." />
+      <property name="sticky" type="bool" var="IsSticky" desc="Whether the thread is sticky or not." />
       <property name="bestpid" type="int" var="BestPostId" desc="The id of the highest rated post."/>
     </properties>
   </request>
-  
+
+  <!-- Posts -->
+  <request class="Post" ask="Posts">
+    <method name="Get" apiType="Read" scope="POSTS" desc="Gets the post from the specified post id.">
+      <param name="_pid" type="int" var="postId" desc="The post id." />
+    </method>
+    <method name="SearchByThreadId" apiType="Read" multi="true" pages="true" scope="POSTS" desc="Gets the posts from the specified thread id.">
+      <param name="_tid" type="int" var="threadId" desc="The thread id." />
+    </method>
+    <method name="SearchByUserId" apiType="Read" multi="true" pages="true" scope="POSTS" desc="Searches all the posts made by the specified user.">
+      <param name="_uid" type="int" var="userId" desc="The user id." />
+    </method>
+    <method name="Create" apiType="Write" scope="POSTSWRITE" desc="Creates a new post in the specified thread with the current token user as the author.">
+      <param name="_tid" type="int" var="forumId" desc="The thread id." />
+      <param name="_message" type="string" var="message" desc="The message to post." />
+    </method>
+    <properties>
+      <property name="pid" type="long" var="Id" desc="The post id." />
+      <property name="tid" type="int" var="ThreadId" desc="The thread id." />
+      <property name="uid" type="int" var="UserId" desc="The user id of the author." />
+      <property name="fid" type="int" var="ForumId" desc="The forum id." />
+      <property name="dateline" type="DateTime" var="CreationTime" desc="The time that the thread was created."/>
+      <property name="message" type="string" var="Message" desc="The message of the post." />
+      <property name="subject" type="string" var="Subject" desc="The subject of the post." />
+      <property name="edituid" type="int" var="EditUserId" desc="The user id of the last editor." />
+      <property name="edittime" type="DateTime" var="EditTime" desc="The time of the last edit." />
+      <property name="editreason" type="string" var="EditReason" desc="The reason behind the last edit." />
+      <property name="author" type="User" var="User" desc="The user that authored the post." />
+    </properties>
+  </request>
+
+  <!-- Users -->
+  <request class="User" ask="Users">
+    <method name="Get" apiType="Read" scope="USERS" desc="Gets the user from the specified user id.">
+      <param name="_uid" type="int" var="userId" desc="The user id." />
+    </method>
+    <properties>
+      <property name="uid" type="int" var="UserId" desc="The user's id." />
+      <property name="username" type="string" var="Username" desc="The username." />
+      <property name="postnum" type="int" var="PostCount" desc="The number of posts made." />
+      <property name="avatar" type="string" var="AvatarUrl" desc="The url or path to the user's avatar." />
+      <property name="avatardimensions" type="Size" var="AvatarDimensions" desc="The avatar dimensions." />
+      <property name="avatartype" type="string" var="AvatarType" desc="The avatar type." />
+      <property name="usergroup" type="int" var="UserGroupId" desc="The primary user group id." />
+      <property name="displaygroup" type="int" var="DisplayGroupId" desc="The display group id." />
+      <property name="additionalgroups" type="int[]" var="AdditionalGroupIds" desc="Comma-delimited list of secondary usergroups." />
+      <property name="awards" type="int" var="Awards" desc="The number of awards received." />
+      <property name="threadnum" type="int" var="ThreadCount" desc="The number of threads created." />
+      <property name="usertitle" type="string" var="UserTitle" desc="The user title." />
+      <property name="website" type="string" var="Website" desc="The user website." />
+      <property name="timeonline" type="TimeSpan" var="TimeOnline" desc="The accumulated time, in seconds, that the user has ever been online for." />
+      <property name="reputation" type="int" var="ReputationCount" desc="The total number of reputation points." />
+      <property name="referrals" type="int" var="ReferralsCount" desc="The total number of users referred." />
+      <property name="myps" type="decimal" var="BytesCount" desc="The total number of bytes currently held." />
+    </properties>
+  </request>
+
+  <!-- Byte Transactions -->
+  <request class="ByteTransaction" ask="Bytes">
+    <method name="Get" apiType="Read" scope="BYTES" desc="Gets the byte transaction from the specified transaction id.">
+      <param name="_id" type="int" var="transactionId" desc="The byte transaction id." />
+    </method>
+    <method name="SearchByUserId" apiType="Read" multi="true" pages="true" scope="BYTES" desc="Searches all the byte transactions involving the specified user.">
+      <param name="_uid" type="int" var="userId" desc="The user id." />
+    </method>
+    <method name="SearchByFromUserId" apiType="Read" multi="true" pages="true" scope="BYTES" desc="Searches all the byte transactions sent from the specified user.">
+      <param name="_from" type="int" var="userId" desc="The user id." />
+    </method>
+    <method name="SearchByToUserId" apiType="Read" multi="true" pages="true" scope="BYTES" desc="Searches all the byte transactions sent to the specified user.">
+      <param name="_to" type="int" var="userId" desc="The user id." />
+    </method>
+    <method name="Donate" apiType="Write" scope="POSTSWRITE" desc="Donates bytes from the current token user to the specified user.">
+      <param name="_uid" type="int" var="forumId" desc="The user id to donate the bytes to." />
+      <param name="_amount" type="decimal" var="amount" desc="The amount of bytes to send." />
+      <param name="_reason" type="string" var="reason" desc="The message to post." default="null" ifNotDefault="reason" />
+      <param name="_pid" type="long" var="postId" desc="The post id to link this donation to." default="0" ifNotDefault="postId" />
+    </method>
+    <method name="Deposit" apiType="Write" scope="POSTSWRITE" desc="Deposits the specified amount of bytes to the current token user's vault.">
+      <param name="_deposit" type="decimal" var="amount" desc="The amount of bytes to deposit." min="100" />
+    </method>
+    <method name="Withdraws" apiType="Write" scope="POSTSWRITE" desc="Withdraws the specified amount of bytes from the current token user's vault.">
+      <param name="_withdraw" type="decimal" var="amount" desc="The amount of bytes to withdraw." min="100" />
+    </method>
+    <method name="BumpThread" apiType="Write" scope="POSTSWRITE" desc="Bumps the specified thread using the current token user's bytes.">
+      <param name="_bump" type="int" var="threadId" desc="The id of the thread to bump." />
+    </method>
+    <properties>
+      <property name="id" type="int" var="Id" desc="The transaction id." />
+      <property name="amount" type="decimal" var="Amount" desc="The amount of the transaction." />
+      <property name="dateline" type="DateTime" var="Time" desc="The time of the transaction." />
+      <property name="type" type="ByteTransactionType" var="Type" desc="The type of transaction." />
+      <property name="reason" type="string" var="Reason" desc="The reason, if any, specified for the transaction." />
+      <property name="from" type="User" var="FromUser" desc="The user that initated the transaction." />
+      <property name="to" type="User" var="ToUser" desc="The recipient of the transaction." />
+      <property name="post" type="Post" var="Post" desc="The post linked to this byte transaction (if any)." />
+    </properties>
+  </request>
+
+  <!-- Contracts -->
+  <request class="Contract" ask="Contracts">
+    <method name="Get" apiType="Read" scope="CONTRACTS" desc="Gets the contract from the specified contract id.">
+      <param name="_cid" type="int" var="contractId" desc="The contract id." />
+    </method>
+    <method name="SearchByUserId" apiType="Read" multi="true" pages="true" scope="CONTRACTS" desc="Searches all the contracts involving the specified user.">
+      <param name="_uid" type="int" var="userId" desc="The user id." />
+    </method>
+    <method name="Create" apiType="Write" scope="CONTRACTS" desc="Creates a new contract initiated by the current token user with the specified parameters.">
+      <param name="_action" value="new" const="true" />
+      <param name="_uid" type="int" var="userId" description="The id of the other user to begin the contract with." />
+      <param name="_position" type="ContractPosition" var="position" description="The current user's position in the contract." />
+      <param name="_terms" type="string" var="terms" description="The terms of the contract." />
+
+      <param name="_yourproduct" type="string" var="yourProduct" description="The user's product." default="null" ifNotDefault="yourProduct" />
+      <param name="_yourcurrency" type="ContractCurrency" var="yourCurrency" description="The user's currency." default="ContractCurrency.NONE" ifNotDefault="yourCurrency.ToString()" />
+      <param name="_youramount" type="string" var="yourAmount" description="The user's amount (and currency if ContractCurrency.OTHER)." default="null" ifNotDefault="yourAmount" />
+
+      <param name="_theirproduct" type="string" var="theirProduct" description="The other user's product." default="null" ifNotDefault="theirProduct" />
+      <param name="_theircurrency" type="ContractCurrency" var="theirCurrency" description="The other user's currency." default="ContractCurrency.NONE" ifNotDefault="theirCurrency.ToString()" />
+      <param name="_theiramount" type="string" var="theirAmount" description="The other user's amount (and currency if ContractCurrency.OTHER)." default="null" ifNotDefault="theirAmount" />
+
+      <param name="_tid" type="int" var="threadId" description="The id of the thread to link this contract to." default="0" ifNotDefault="threadId" />
+      <param name="_muid" type="int" var="middlemanId" description="The user id of the middleman." default="0" ifNotDefault="middlemanId" />
+      <param name="_timeout" type="int" var="timeoutDays" description="The time (in days) that the contract will expire." default="0" ifNotDefault="timeoutDays" />
+      <param name="_public" type="bool" var="isPublic" description="Whether this is a public contract." default="false" ifNotDefault="&quot;yes&quot;" />
+      <param name="_address" type="string" var="paymentAddress" description="The payment address." default="null" ifNotDefault="paymentAddress" />
+    </method>
+    <method name="Undo" apiType="Write" scope="CONTRACTS" desc="Undo a newly created contract.">
+      <param name="_action" value="undo" const="true" />
+      <param name="_cid" type="int" var="contractId" description="The id of the contract." />
+    </method>
+    <method name="Deny" apiType="Write" scope="CONTRACTS" desc="Deny a new contract.">
+      <param name="_action" value="deny" const="true" />
+      <param name="_cid" type="int" var="contractId" description="The id of the contract." />
+    </method>
+    <method name="Approve" apiType="Write" scope="CONTRACTS" desc="Approve a new contract.">
+      <param name="_action" value="approve" const="true" />
+      <param name="_cid" type="int" var="contractId" description="The id of the contract." />
+      <param name="_address" type="string" var="paymentAddress" description="The payment address." default="null" ifNotDefault="paymentAddress" />
+    </method>
+    <method name="MiddlemanDeny" apiType="Write" scope="CONTRACTS" desc="Deny a contract as middleman.">
+      <param name="_action" value="middleman_deny" const="true" />
+      <param name="_cid" type="int" var="contractId" description="The id of the contract." />
+    </method>
+    <method name="MiddlemanApprove" apiType="Write" scope="CONTRACTS" desc="Approve a contract as middleman.">
+      <param name="_action" value="middleman_approve" const="true" />
+      <param name="_cid" type="int" var="contractId" description="The id of the contract." />
+    </method>
+    <method name="VendorCancel" apiType="Write" scope="CONTRACTS" desc="Cancel as contract (spawned from contract template) as Vendor.">
+      <param name="_action" value="vendor_cancel" const="true"  />
+      <param name="_cid" type="int" var="contractId" description="The id of the contract." />
+    </method>
+    <method name="Cancel" apiType="Write" scope="CONTRACTS" desc="Request cancel (requires both parties to cancel).">
+      <param name="_action" value="cancel" const="true"  />
+      <param name="_cid" type="int" var="contractId" description="The id of the contract." />
+    </method>
+    <method name="Complete" apiType="Write" scope="CONTRACTS" desc="Mark a contract as complete.">
+      <param name="_action" value="complete" const="true"  />
+      <param name="_cid" type="int" var="contractId" description="The id of the contract." />
+      <param name="_txn" type="string" var="txn" description="The transaction." default="null" ifNotDefault="txn" />
+    </method>
+    <properties>
+      <!-- Header fields -->
+      <property name="cid" type="int" var="Id" desc="The contract id."/>
+      <property name="dateline" type="DateTime" var="InitTime" desc="The time that the contract was initiated." />
+      <property name="otherdateline" type="DateTime" var="AcceptTime" desc="The time that the contract was accepted by the other user." />
+      <property name="public" type="bool" var="IsPublic" desc="True if the contract is public, false if private." />
+      <property name="timeout_days" type="int" var="TimeoutDays" desc="The number of days until the contract expires." />
+      <property name="timeout" type="DateTime" var="Expiration" desc="The date that the contract is set to expire." />
+      <property name="terms" type="string" var="Terms" desc="The contract terms." />
+      <property name="tid" type="int" var="ThreadId" desc="The id of the thread the contract is linked to." />
+      <property name="thread" type="Thread" var="Thread" desc="The thread the contract is linked to." />
+      <property name="template_id" type="int" var="TemplateId" desc="The id of the template used to create the contract." />
+      <property name="cancelstatus" type="bool" var="IsCanceled" desc="True if the contract was canceled." />
+
+      <!-- Linked fields (users/threads) -->
+      <property name="type" type="ContractPosition" var="Position" desc="The type of contract (from the initiator side)." />
+      <property name="inituid" type="int" var="InitUserId" desc="The id of the user that initiated the contract." />
+      <property name="inituser" type="User" var="InitUser" desc="The user that initiated the contract." />
+      <property name="otheruid" type="int" var="OtherUserId" desc="The id of the user that received the contract." />
+      <property name="otheruser" type="User" var="OtherUser" desc="The user that received the contract." />
+      <property name="muid" type="int" var="MiddleManUserId" desc="The id of the middleman." />
+      <property name="escrow" type="User" var="MiddleManUser" desc="The middleman user." />
+
+      <!-- Payment fields -->
+      <property name="iprice" type="string" var="InitPrice" desc="The price that the initiating user will pay." />
+      <property name="oprice" type="string" var="OtherPrice" desc="The price that the other user will pay." />
+      <property name="icurrency" type="string" var="InitPriceCurrency" desc="The price currency for the user that initiated the contract."/>
+      <property name="ocurrency" type="string" var="OtherPriceCurrency" desc="The price currency for the user that received the contract."/>
+      <property name="iaddress" type="string" var="InitPaymentAddress" desc="The payment address for the user that initiated the contract."/>
+      <property name="oaddress" type="string" var="OtherPaymentAddress" desc="The payment address for the user that received the contract."/>
+      <property name="iproduct" type="string" var="InitProduct" desc="The product or service being provided from the user that initiated the contract."/>
+      <property name="oproduct" type="string" var="OtherProduct" desc="The product or service being provided from the user that received the contract."/>
+
+      <!-- Result fields (dispute/rating) -->
+      <property name="idispute" type="Dispute" var="InitDispute" desc="The linked dispute left by the user that initiated the contract." />
+      <property name="odispute" type="Dispute" var="OtherDispute" desc="The linked dispute left by the user that received the contract."/>
+      <property name="ibrating" type="BusinessRating" var="InitRating" desc="The business rating left by the user that initiated the contract."/>
+      <property name="obrating" type="BusinessRating" var="OtherRating" desc="The business rating left by the user that received the contract."/>
+
+      <!-- Unsupported fields (need more detail on what these values stand for) -->
+      <property name="status" type="object" var="Status" desc="Field 'status', need more information to implement." unsupported="true" />
+      <property name="istatus" type="object" var="InitStatus" desc="Field 'status', need more information to implement." unsupported="true" />
+      <property name="ostatus" type="object" var="OtherStatus" desc="Field 'status', need more information to implement." unsupported="true" />
+    </properties>
+  </request>
+
+  <!-- Deal Disputes -->
+  <request class="Dispute" ask="Disputes">
+    <method name="Get" apiType="Read" scope="CONTRACTS" desc="Gets the dispute from the specified dispute id.">
+      <param name="_cdid" type="int" var="disputeId" desc="The dispute id." />
+    </method>
+    <method name="SearchByContractId" apiType="Read" multi="true" pages="true" scope="CONTRACTS" desc="Searches all the disputes involving the specified contract.">
+      <param name="_cid" type="int" var="contractId" desc="The contract id." />
+    </method>
+    <method name="SearchByUserId" apiType="Read" multi="true" pages="true" scope="CONTRACTS" desc="Searches all the disputes involving the specified user.">
+      <param name="_uid" type="int" var="userId" desc="The user id." />
+    </method>
+    <method name="SearchByClaimantId" apiType="Read" multi="true" pages="true" scope="CONTRACTS" desc="Searches all the disputes initiated by the specified user.">
+      <param name="_claimantuid" type="int" var="userId" desc="The claimant user id." />
+    </method>
+    <method name="SearchByDefendantId" apiType="Read" multi="true" pages="true" scope="CONTRACTS" desc="Searches all the disputes received by the specified user.">
+      <param name="_defendantuid" type="int" var="userId" desc="The defendant user id." />
+    </method>
+    <properties>
+      <property name="cdid" type="int" var="Id" desc="The dispute id." />
+      <property name="dateline" type="DateTime" var="Time" desc="The time the dispute was opened." />
+      <property name="dispute_tid" type="int" var="DisputeThreadId" desc="The id of the thread linked to this dispute." />
+      <property name="dispute_thread" type="Thread" var="DisputeThread" desc="The thread linked to this dispute." />
+
+      <property name="contractid" type="int" var="ContractId" desc="The contract id." />
+      <property name="contract" type="Contract" var="Contract" desc="The contract associated with this dispute." />
+
+      <property name="claimantuid" type="int" var="ClaimantUserId" desc="The id of the user that initiated the dispute." />
+      <property name="claimant" type="User" var="ClaimantUser" desc="The user that initiated the dispute." />
+      <property name="claimantnotes" type="string" var="ClaimantNotes" desc="The information provided by the user that initiated the dispute." />
+
+      <property name="defendantuid" type="int" var="DefendantUserId" desc="The id of the user that is receiving the dispute." />
+      <property name="defendant" type="User" var="DefendantUser" desc="The user that is receiving the dispute." />
+      <property name="defendantnotes" type="string" var="DefendantNotes" desc="The information provided by the user that is receiving the dispute." />
+
+      <!-- Unsupported fields (need more detail on what these values stand for) -->
+      <property name="status" type="object" var="Status" desc="Field 'status', need more information to implement." unsupported="true" />
+    </properties>
+  </request>
+
+  <!-- Business Ratings -->
+  <request class="BusinessRating" ask="Bratings">
+    <method name="Get" apiType="Read" scope="CONTRACTS" desc="Gets the business rating from the specified transaction id.">
+      <param name="_crid" type="int" var="transactionId" desc="The byte transaction id." />
+    </method>
+    <method name="SearchByContractId" apiType="Read" multi="true" pages="true" scope="CONTRACTS" desc="Searches all the business ratings involving the specified contract.">
+      <param name="_cid" type="int" var="contractId" desc="The contract id." />
+    </method>
+    <method name="SearchByUserId" apiType="Read" multi="true" pages="true" scope="CONTRACTS" desc="Searches all the business ratings involving the specified user.">
+      <param name="_uid" type="int" var="userId" desc="The user id." />
+    </method>
+    <method name="SearchByFromUserId" apiType="Read" multi="true" pages="true" scope="CONTRACTS" desc="Searches all the business ratings given from the specified user.">
+      <param name="_from" type="int" var="userId" desc="The user id." />
+    </method>
+    <method name="SearchByToUserId" apiType="Read" multi="true" pages="true" scope="CONTRACTS" desc="Searches all the business ratings given to the specified user.">
+      <param name="_to" type="int" var="userId" desc="The user id." />
+    </method>
+    <properties>
+      <property name="crid" type="int" var="Id" desc="The business rating id." />
+      <property name="dateline" type="DateTime" var="Time" desc="The time the rating was given." />
+      <property name="amount" type="int" var="Amount" desc="The amount of the rating (+1, 0, -1)." />
+      <property name="message" type="string" var="Message" desc="The message left with the rating." />
+
+      <property name="contractid" type="int" var="ContractId" desc="The id of the contract this rating is linked to." />
+      <property name="contract" type="Contract" var="Contract" desc="The contract that this rating is linked to." />
+
+      <property name="fromid" type="int" var="FromUserId" desc="The id of the user giving this rating." />
+      <property name="from" type="User" var="FromUser" desc="The user giving this rating." />
+
+      <property name="toid" type="int" var="ToUserId" desc="The id of the user receiving this rating."/>
+      <property name="to" type="User" var="ToUser" desc="The user receiving this rating." />
+    </properties>
+  </request>
 </endpoints>

@@ -61,7 +61,7 @@ namespace HF_API.Requests
         /// <summary>
         /// Adds the result parameters to the Parameter collection.
         /// </summary>
-        protected virtual void AddResultParameters() { }
+        internal virtual Dictionary<string, object> AddResultParameters() { return new Dictionary<string, object>(); }
 
         /// <summary>
         /// For caching parameter result sets.
@@ -79,18 +79,18 @@ namespace HF_API.Requests
         private static Dictionary<Type, object> cacheTypeLock = new Dictionary<Type, object>();
 
         /// <summary>
-        /// 
+        /// Adds result parameter to the parameter collection.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="parameterName"></param>
         /// <param name="include"></param>
-        protected void AddResultParameter<T>(string parameterName, bool include = true)
+        protected KeyValuePair<string, object> AddResultParameter<T>(string parameterName, bool include = true)
         {
             // If not including, just set to false to prevent any results
             if (!include)
             {
                 Parameters.Add(parameterName, include);
-                return;
+                return KeyValuePair.Create(parameterName, (object)include);
             }
 
             var type = typeof(T);
@@ -114,9 +114,8 @@ namespace HF_API.Requests
                     {
                         if (type.IsSubclassOf(typeof(APIResult)))
                         {
-                            var result = Activator.CreateInstance<T>() as APIRequest;
-                            result.AddResultParameters();
-                            resultCache[type].Add(parameterName, result.Parameters);
+                            var result = Activator.CreateInstance<T>() as APIResult;
+                            resultCache[type].Add(parameterName, result.GetResultParameters());
                         }
                         else
                         {
@@ -126,7 +125,9 @@ namespace HF_API.Requests
                 }
             }
 
-            Parameters.Add(parameterName, resultCache[type][parameterName]);
+            var param = KeyValuePair.Create(parameterName, resultCache[type][parameterName]);
+            Parameters.Add(param.Key, param.Value);
+            return param;
         }
 
         /// <summary>
@@ -182,16 +183,16 @@ namespace HF_API.Requests
                     }
                 }
 
-                if (!result.Success)
+                if (!result.IsSuccess)
                 {
-                    throw APIException.FromMessage(result.Message);
+                    throw APIException.FromMessage(result.ExceptionMessage);
                 }
             }
             catch (Exception ex)
             {
                 // If anything happens, flag unsuccessful and log error to the APIResult
-                result.Success = false;
-                result.Message = ex.ToString();
+                result.IsSuccess = false;
+                result.ExceptionMessage = ex.ToString();
             }
             return result;
         }
@@ -228,8 +229,12 @@ namespace HF_API.Requests
             {
                 // If anything happens, flag unsuccessful and log error to the APIResult
                 var exResult = Activator.CreateInstance<T>();
-                exResult.Success = false;
-                exResult.Message = ex.ToString();
+                exResult.IsSuccess = false;
+                exResult.ExceptionMessage = ex.ToString();
+                if(ex is APIException apiEx)
+                {
+                    exResult.ExceptionCode = apiEx.Code;
+                }
                 result = new[] { exResult };
             }
             return result;
@@ -256,7 +261,9 @@ namespace HF_API.Requests
             var response = await client.PostAsync(requestPath, requestParameters);
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadAsStringAsync();
+                string json = await response.Content.ReadAsStringAsync();
+                // Replace PRIVATE_FIELD results with null values
+                return json?.Replace("\"PRIVATE_FIELD\"", "null");
             }
             else
             {

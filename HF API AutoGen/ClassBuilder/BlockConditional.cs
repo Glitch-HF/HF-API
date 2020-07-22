@@ -34,8 +34,8 @@ namespace HF_API_AutoGen
         /// <param name="expression">The expression, or condition (for conditional types) of block.</param>
         /// <param name="indentation">The indentation level of the statement.</param>
         /// <param name="innerBlocks">The inner block statements.</param>
-        public BlockConditional(string expression, int indentation = 0, params BlockStatement[] innerBlocks)
-            : base(expression, indentation)
+        public BlockConditional(string expression, params BlockStatement[] innerBlocks)
+            : base(expression)
         {
             InnerBlocks.AddRange(innerBlocks);
         }
@@ -70,7 +70,7 @@ namespace HF_API_AutoGen
             builder.AppendLine($"{Tab}if ({Expression})");
             builder.AppendLine($"{Tab}{{");
             InnerBlocks.ForEach(block => builder.AppendLine(block.Generate()));
-            builder.AppendLine($"{Tab}}}");
+            builder.Append($"{Tab}}}");
             return builder.ToString();
         }
     }

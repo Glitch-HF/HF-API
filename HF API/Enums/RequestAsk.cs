@@ -32,6 +32,14 @@
         /// <summary>
         /// Contracts reading and writing (CONTRACTS CONTRACTSWRITE)
         /// </summary>
-        Contracts
+        Contracts,
+        /// <summary>
+        /// Business ratings reading (CONTRACTS)
+        /// </summary>
+        Bratings,
+        /// <summary>
+        /// Disputes reading (CONTRACTS)
+        /// </summary>
+        Disputes
     }
 }

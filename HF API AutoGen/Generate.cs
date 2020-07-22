@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace HF_API_AutoGen
@@ -28,7 +30,7 @@ namespace HF_API_AutoGen
                     throw new Exception("Could not find embedded resource 'endpoints.xml'");
                 }
 
-                var doc = XDocument.Load(assembly.GetManifestResourceStream(endpointResource));
+                var doc = XDocument.Load(assembly.GetManifestResourceStream(endpointResource), LoadOptions.SetLineInfo);
                 GenerateRequestFiles(doc, sourcePath);
             }
             catch (Exception ex)
@@ -45,6 +47,7 @@ namespace HF_API_AutoGen
 
             string[] customConverters = Directory.EnumerateFiles(Path.Combine(sourcePath, "Converters"), "*.cs").Select(Path.GetFileNameWithoutExtension).ToArray();
             string[] customEnums = Directory.EnumerateFiles(Path.Combine(sourcePath, "Enums"), "*.cs").Select(Path.GetFileNameWithoutExtension).ToArray();
+            string[] resultTypes = doc.Root.Elements("request").Select(request => $"{request.Attribute("class").Value}Result").ToArray();
 
             var mainApiClass = new ClassBuilder("HFAPI", "HF_API");
             mainApiClass.AddUsings("HF_API.Results", "HF_API.Requests", "HF_API.Enums");
@@ -66,13 +69,13 @@ namespace HF_API_AutoGen
             foreach (var request in doc.Root.Elements("request"))
             {
                 string className = request.Attribute("class").Value;
+                Log($"Request type: {className}");
 
                 string ask = request.Attribute("ask")?.Value;
                 string inherits = request.Attribute("inherits")?.Value;
 
-
                 var requestClass = new ClassBuilder($"{className}Request", "HF_API.Requests", $"{inherits ?? "API"}Request", "internal");
-                requestClass.AddUsings("HF_API.Enums", "HF_API.Results", "System.Net.Http");
+                requestClass.AddUsings("HF_API.Enums", "HF_API.Results", "System.Net.Http", "System.Collections.Generic", "System.Linq");
                 if (!string.IsNullOrWhiteSpace(ask))
                 {
                     requestClass.OverrideProperty("Ask", "RequestAsk", $"RequestAsk.{ask}");
@@ -85,9 +88,19 @@ namespace HF_API_AutoGen
                 }
 
                 var resultClass = new ClassBuilder($"{className}Result", "HF_API.Results", $"{inherits ?? "API"}Result");
-                resultClass.AddUsings("Newtonsoft.Json");
+                resultClass.AddUsings("HF_API.Requests", "Newtonsoft.Json", "System", "System.Collections.Generic");
 
-                var properties = request.Descendants("property");
+                var properties = request.Descendants("property").ToList();
+                int resultPropertyCount = 0;
+                foreach(var prop in properties)
+                {
+                    string resultProp = $"{prop.Attribute("type").Value}Result";
+                    if (resultTypes.Contains(resultProp))
+                    {
+                        resultPropertyCount++;
+                    }
+                }
+                int maxPerPage = 30 / Math.Max(1, resultPropertyCount);
 
                 foreach (var method in request.Elements("method"))
                 {
@@ -103,7 +116,31 @@ namespace HF_API_AutoGen
                         }
                     };
 
-                    var parameters = method.Elements("param");
+                    var parameters = method.Elements("param").ToList();
+                    if (method.Attribute("pages")?.Value?.ToLower() == "true")
+                    {
+                        parameters.AddRange(new[]
+                        {
+                            new XElement("param",
+                                new XAttribute("name", "_page"),
+                                new XAttribute("type", "int"),
+                                new XAttribute("var", "page"),
+                                new XAttribute("min", "1"),
+                                new XAttribute("default", "1"),
+                                new XAttribute("desc", "The page number.")
+                            ),
+                            new XElement("param",
+                                new XAttribute("name", "_perpage"),
+                                new XAttribute("type", "int"),
+                                new XAttribute("var", "perPage"),
+                                new XAttribute("min", "1"),
+                                new XAttribute("max", maxPerPage),
+                                new XAttribute("default", "1"),
+                                new XAttribute("desc", "The number of results per page.")
+                            )
+                        });
+                    }
+
                     var requestConstructor = $"new {requestClass.Name}()";
                     var methodStatements = new List<BlockStatement>()
                     {
@@ -113,17 +150,59 @@ namespace HF_API_AutoGen
 
                     foreach (var param in parameters)
                     {
-                        string paramVar = param.Attribute("var").Value;
-                        string paramType = param.Attribute("type").Value;
-
-                        methodParams.Add(new MethodParameter
+                        try
                         {
-                            Name = paramVar,
-                            Type = paramType,
-                            Description = param.Attribute("desc")?.Value,
-                        });
+                            if (param.Attribute("const")?.Value.ToLower().Trim() == "true")
+                            {
+                                methodStatements.Add($"request.Parameters.Add(\"{param.Attribute("name").Value}\", \"{param.Attribute("value").Value}\");");
+                                continue;
+                            }
 
-                        methodStatements.Add($"request.Parameters.Add(\"{param.Attribute("name").Value}\", {paramVar});");
+                            string paramType = param.Attribute("type").Value;
+                            string paramVar = param.Attribute("var").Value;
+                            string paramDefault = param.Attribute("default")?.Value;
+
+                            methodParams.Add(new MethodParameter
+                            {
+                                Name = paramVar,
+                                Type = paramType,
+                                Description = param.Attribute("desc")?.Value,
+                                Default = paramDefault
+                            });
+
+                            if (int.TryParse(param.Attribute("min")?.Value ?? "", out int paramMin) && paramMin > 0)
+                            {
+                                requestClass.AddUsings("System");
+                                methodStatements.Add(new BlockConditional($"{paramVar} < {paramMin}", $"throw new ArgumentException(\"Parameter cannot be less than {paramMin}.\", nameof({paramVar}));"));
+                            }
+
+                            if (int.TryParse(param.Attribute("max")?.Value ?? "", out int paramMax) && paramMax > 0)
+                            {
+                                requestClass.AddUsings("System");
+                                methodStatements.Add(new BlockConditional($"{paramVar} > {paramMax}", $"throw new ArgumentException(\"Parameter cannot be greater than {paramMax}.\", nameof({paramVar}));"));
+                            }
+
+                            BlockStatement requestStatement = $"request.Parameters.Add(\"{param.Attribute("name").Value}\", {paramVar});";
+
+                            string ifNotDefault = param.Attribute("ifNotDefault")?.Value;
+                            if (ifNotDefault != null)
+                            {
+                                requestStatement = new BlockConditional($"{paramVar} != {paramDefault}", $"request.Parameters.Add(\"{param.Attribute("name").Value}\", {ifNotDefault});");
+                            }
+
+                            methodStatements.Add(requestStatement);
+                        }
+                        catch (Exception paramException)
+                        {
+                            int lineNumber = -1, linePosition = -1;
+                            var propInfo = (IXmlLineInfo)param;
+                            if (propInfo.HasLineInfo())
+                            {
+                                lineNumber = propInfo.LineNumber;
+                                linePosition = propInfo.LinePosition;
+                            }
+                            throw new XmlException($"Issue found in endpoints.xml with property:{Environment.NewLine}{param.ToString()}", paramException, lineNumber, linePosition);
+                        }
                     }
 
                     methodStatements.Add("request.AddResultParameters();");
@@ -142,6 +221,8 @@ namespace HF_API_AutoGen
                         modifiers: $"public static{(hasBase ? " new" : "")}"
                     );
 
+                    Log($"- [{method.Attribute("apiType").Value}] {resultClass.Name}{(multiResponse ? "[]" : "")} {className}{methodName}({string.Join(", ", methodParams.Skip(1).Select(param => $"{param.Type} {param.Name}"))})");
+
                     mainApiClass.AddMethod(
                         name: className + methodName,
                         summary: methodSummary,
@@ -155,59 +236,125 @@ namespace HF_API_AutoGen
                     );
                 }
 
+                List<string> processedNames = new List<string>();
+                List<string> processedVarNames = new List<string>();
+                foreach (var prop in properties)
+                {
+                    try
+                    {
+                        string propName = prop.Attribute("name").Value;
+                        if (processedNames.Contains(propName.ToLower()))
+                        {
+                            throw new Exception($"Properties must have unique names, found duplicate '{propName}'");
+                        }
+                        processedNames.Add(propName.ToLower());
+
+                        string propVarName = prop.Attribute("var").Value;
+                        if (processedVarNames.Contains(propVarName.ToLower()))
+                        {
+                            throw new Exception($"Properties must have unique var names, found duplicate '{propVarName}'");
+                        }
+                        processedVarNames.Add(propVarName.ToLower());
+
+                        string propType = GetPropType(prop, resultTypes);
+
+                        string propConverter = null;
+                        if (customEnums.Contains(propType))
+                        {
+                            resultClass.AddUsings("HF_API.Enums");
+                            requestClass.AddUsings("HF_API.Enums");
+                        }
+                        else
+                        {
+                            switch (propType.ToLower())
+                            {
+                                case "datetime":
+                                    propConverter = "UnixDateTimeConverter";
+                                    resultClass.AddUsings("System");
+                                    requestClass.AddUsings("System");
+                                    break;
+
+                                case "size":
+                                    propConverter = "AvatarSizeConverter";
+                                    resultClass.AddUsings("System.Drawing");
+                                    requestClass.AddUsings("System.Drawing");
+                                    break;
+
+                                case "int[]":
+                                    propConverter = "StringIntArrayConverter";
+                                    break;
+
+                                case "timespan":
+                                    resultClass.AddUsings("System");
+                                    requestClass.AddUsings("System");
+                                    break;
+                            }
+                        }
+
+                        if (string.IsNullOrEmpty(propConverter))
+                        {
+                            propConverter = customConverters.FirstOrDefault(converter => converter.ToLower() == $"{propType.ToLower()}converter");
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(propConverter))
+                        {
+                            resultClass.AddUsings(customConverters.Contains(propConverter) ? $"HF_API.Converters" : "Newtonsoft.Json.Converters");
+                        }
+
+                        resultClass.AddProperty(
+                            name: propVarName,
+                            type: propType,
+                            description: prop.Attribute("desc").Value,
+                            jsonProperty: propName,
+                            jsonConverter: propConverter
+                        );
+                    }
+                    catch (Exception propertyException)
+                    {
+                        int lineNumber = -1, linePosition = -1;
+                        var propInfo = (IXmlLineInfo)prop;
+                        if (propInfo.HasLineInfo())
+                        {
+                            lineNumber = propInfo.LineNumber;
+                            linePosition = propInfo.LinePosition;
+                        }
+                        throw new XmlException($"Issue found in endpoints.xml with property:{Environment.NewLine}{prop.ToString()}", propertyException, lineNumber, linePosition);
+                    }
+                }
+
                 var addResultParametersStatements = new List<BlockStatement>();
                 if (hasBase)
                 {
-                    addResultParametersStatements.Add("base.AddResultParameters();");
+                    addResultParametersStatements.Add("newParams.AddRange(base.AddResultParameters());");
                 }
-                addResultParametersStatements.AddRange(properties.Select(prop => new BlockStatement($"AddResultParameter<{prop.Attribute("type").Value}>(\"{prop.Attribute("name").Value}\", true);")));
+
+                addResultParametersStatements.AddRange(properties.Select(prop => new BlockStatement($"newParams.Add(AddResultParameter<{GetPropType(prop, resultTypes)}>(\"{prop.Attribute("name").Value}\", true));")));
                 requestClass.AddMethod(
                     name: "AddResultParameters",
-                    type: "void",
+                    type: "Dictionary<string, object>",
                     summary: new[] { "Adds the result parameters to the list." },
                     parameters: new List<MethodParameter>(),
-                    statements: addResultParametersStatements.ToList(),
-                    modifiers: $"protected override"
+                    statements: new BlockStatement[]
+                    {
+                        "var newParams = new List<KeyValuePair<string, object>>();"
+                    }.Concat(addResultParametersStatements).Concat(new BlockStatement[]
+                    {
+                        "return newParams.ToDictionary(_ => _.Key, _ => _.Value);"
+                    }).ToList(),
+                    modifiers: "internal override"
                 );
-
-                foreach (var prop in properties)
-                {
-                    string propConverter = prop.Attribute("converter")?.Value;
-                    if (!string.IsNullOrWhiteSpace(propConverter))
+                
+                resultClass.AddMethod(
+                    name: "GetResultParameters",
+                    summary: new[] { $"Gets the result parameter set from a new <see cref=\"{requestClass.Name}\" /> instance." },
+                    type: "Dictionary<string, object>",
+                    parameters: Array.Empty<MethodParameter>().ToList(),
+                    statements: new List<BlockStatement>
                     {
-                        resultClass.AddUsings(customConverters.Contains(propConverter) ? $"HF_API.Converters" : "Newtonsoft.Json.Converters");
-                    }
-
-                    string propType = prop.Attribute("type").Value;
-                    if (customEnums.Contains(propType))
-                    {
-                        resultClass.AddUsings("HF_API.Enums");
-                        requestClass.AddUsings("HF_API.Enums");
-                    }
-                    else
-                    {
-                        switch (propType.ToLower())
-                        {
-                            case "datetime":
-                                resultClass.AddUsings("System");
-                                requestClass.AddUsings("System");
-                                break;
-                            case "size":
-                                resultClass.AddUsings("System.Drawing");
-                                requestClass.AddUsings("System.Drawing");
-                                break;
-                        }
-                    }
-
-                    string propVarName = prop.Attribute("var").Value;
-                    resultClass.AddProperty(
-                        name: propVarName,
-                        type: propType,
-                        description: prop.Attribute("desc").Value,
-                        jsonProperty: prop.Attribute("name").Value,
-                        jsonConverter: propConverter
-                    );
-                }
+                        $"return (Activator.CreateInstance<{requestClass.Name}>() as APIRequest).AddResultParameters();",
+                    },
+                    modifiers: "internal override"
+                );
 
                 requestClass.Generate(Path.Combine(requestPath, $"{className}Request.Generated.cs"));
                 resultClass.Generate(Path.Combine(resultPath, $"{className}Result.Generated.cs"));
@@ -215,5 +362,17 @@ namespace HF_API_AutoGen
 
             mainApiClass.Generate(Path.Combine(sourcePath, $"HFAPI.Generated.cs"));
         }
+
+        static string GetPropType(XElement prop, string[] resultTypes)
+        {
+            string propType = prop.Attribute("type").Value;
+            if (resultTypes.Any(result => result == $"{propType}Result"))
+            {
+                propType = $"{propType}Result";
+            }
+            return propType;
+        }
+
+        static void Log(string message) => Console.WriteLine(message);
     }
 }

@@ -9,6 +9,8 @@
 using HF_API.Enums;
 using HF_API.Results;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 
 namespace HF_API.Requests
@@ -41,12 +43,24 @@ namespace HF_API.Requests
         /// <param name="userId">The user id.</param>
         /// <param name="page">The page number.</param>
         /// <param name="perPage">The number of results per page.</param>
-        public static ThreadResult[] SearchByUserId(HttpClient client, int userId, int page, int perPage)
+        public static ThreadResult[] SearchByUserId(HttpClient client, int userId, int page = 1, int perPage = 1)
         {
             var request = new ThreadRequest();
             request.Type = RequestType.Read;
             request.Parameters.Add("_uid", userId);
+            if (page < 1)
+            {
+                throw new ArgumentException("Parameter cannot be less than 1.", nameof(page));
+            }
             request.Parameters.Add("_page", page);
+            if (perPage < 1)
+            {
+                throw new ArgumentException("Parameter cannot be less than 1.", nameof(perPage));
+            }
+            if (perPage > 30)
+            {
+                throw new ArgumentException("Parameter cannot be greater than 30.", nameof(perPage));
+            }
             request.Parameters.Add("_perpage", perPage);
             request.AddResultParameters();
             return request.ProcessMultiRequest<ThreadResult>(client);
@@ -74,26 +88,28 @@ namespace HF_API.Requests
         /// <summary>
         /// Adds the result parameters to the list.
         /// <summary>
-        protected override void AddResultParameters()
+        internal override Dictionary<string, object> AddResultParameters()
         {
-            AddResultParameter<int>("tid", true);
-            AddResultParameter<int>("fid", true);
-            AddResultParameter<string>("subject", true);
-            AddResultParameter<int>("prefix", true);
-            AddResultParameter<int>("icon", true);
-            AddResultParameter<int>("poll", true);
-            AddResultParameter<int>("uid", true);
-            AddResultParameter<string>("username", true);
-            AddResultParameter<DateTime>("dateline", true);
-            AddResultParameter<long>("firstpost", true);
-            AddResultParameter<DateTime>("lastpost", true);
-            AddResultParameter<string>("lastposter", true);
-            AddResultParameter<int>("lastposteruid", true);
-            AddResultParameter<int>("views", true);
-            AddResultParameter<int>("numreplies", true);
-            AddResultParameter<bool>("closed", true);
-            AddResultParameter<bool>("sticky", true);
-            AddResultParameter<int>("bestpid", true);
+            var newParams = new List<KeyValuePair<string, object>>();
+            newParams.Add(AddResultParameter<int>("tid", true));
+            newParams.Add(AddResultParameter<int>("fid", true));
+            newParams.Add(AddResultParameter<string>("subject", true));
+            newParams.Add(AddResultParameter<int>("prefix", true));
+            newParams.Add(AddResultParameter<int>("icon", true));
+            newParams.Add(AddResultParameter<int>("poll", true));
+            newParams.Add(AddResultParameter<int>("uid", true));
+            newParams.Add(AddResultParameter<string>("username", true));
+            newParams.Add(AddResultParameter<DateTime>("dateline", true));
+            newParams.Add(AddResultParameter<PostResult>("firstpost", true));
+            newParams.Add(AddResultParameter<DateTime>("lastpost", true));
+            newParams.Add(AddResultParameter<string>("lastposter", true));
+            newParams.Add(AddResultParameter<int>("lastposteruid", true));
+            newParams.Add(AddResultParameter<int>("views", true));
+            newParams.Add(AddResultParameter<int>("numreplies", true));
+            newParams.Add(AddResultParameter<bool>("closed", true));
+            newParams.Add(AddResultParameter<bool>("sticky", true));
+            newParams.Add(AddResultParameter<int>("bestpid", true));
+            return newParams.ToDictionary(_ => _.Key, _ => _.Value);
         }
 
     }

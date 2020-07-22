@@ -7,9 +7,11 @@
 #region Auto-Generated Code
 
 using HF_API.Converters;
+using HF_API.Requests;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
+using System.Collections.Generic;
 
 namespace HF_API.Results
 {
@@ -44,6 +46,11 @@ namespace HF_API.Results
         /// <summary>
         [JsonProperty("warningpoints")]
         public decimal WarningPointsCount { get; set; }
+
+        /// <summary>
+        /// Gets the result parameter set from a new <see cref="AdvancedProfileRequest" /> instance.
+        /// <summary>
+        internal override Dictionary<string, object> GetResultParameters() => (Activator.CreateInstance<AdvancedProfileRequest>() as APIRequest).AddResultParameters();
 
     }
 }

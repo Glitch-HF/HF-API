@@ -71,7 +71,7 @@ namespace HF_API
         public bool TryGetAuthToken(string code, out AuthToken token)
         {
             token = AuthRequest.GetToken(Client, ClientId, ClientSecret, code);
-            return token.Success;
+            return token.IsSuccess;
         }
 
         /// <summary>

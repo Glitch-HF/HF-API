@@ -8,7 +8,10 @@
 
 using HF_API.Converters;
 using HF_API.Enums;
+using HF_API.Requests;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
 namespace HF_API.Results
 {
@@ -37,6 +40,11 @@ namespace HF_API.Results
         /// <summary>
         [JsonProperty("type"), JsonConverter(typeof(ForumTypeConverter))]
         public ForumType Type { get; set; }
+
+        /// <summary>
+        /// Gets the result parameter set from a new <see cref="ForumRequest" /> instance.
+        /// <summary>
+        internal override Dictionary<string, object> GetResultParameters() => (Activator.CreateInstance<ForumRequest>() as APIRequest).AddResultParameters();
 
     }
 }
